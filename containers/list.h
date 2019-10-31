@@ -13,7 +13,7 @@ struct list_t
 };
 
 
-void create_list(struct list_t *list, uint32_t elem_size, uint32_t buffer_size);
+struct list_t create_list(uint32_t elem_size, uint32_t buffer_size);
 
 void destroy_list(struct list_t *list);
 

@@ -15,7 +15,7 @@ struct stack_list_t
     uint32_t free_stack_top;
 };
 
-void init_stack_list(struct stack_list_t *stack_list, uint32_t elem_size, uint32_t buffer_size);
+struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size);
 
 void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count);
 

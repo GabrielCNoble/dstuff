@@ -4,14 +4,17 @@
 #include <string.h>
 
 
-void create_list(struct list_t *list, uint32_t elem_size, uint32_t buffer_size)
+struct list_t create_list(uint32_t elem_size, uint32_t buffer_size)
 {
-    memset(list, 0, sizeof(struct list_t));
+    struct list_t list;
+    memset(&list, 0, sizeof(struct list_t));
 
-    list->buffer_size = buffer_size;
-    list->elem_size = elem_size;
+    list.buffer_size = buffer_size;
+    list.elem_size = elem_size;
 
-    expand_list(list, 1);
+    expand_list(&list, 1);
+
+    return list;
 }
 
 void destroy_list(struct list_t *list)
@@ -36,20 +39,21 @@ void expand_list(struct list_t *list, uint32_t elem_count)
     elem_count = (elem_count + list->buffer_size - 1) & (~(list->buffer_size - 1));
     buffer_count = elem_count / list->buffer_size;
     list_buffer_count = list->size / list->buffer_size;
+    list->size += elem_count;
+    buffers = calloc(list->size, sizeof(void *));
 
     if(list->buffers)
     {
-        memcpy(buffers, list->buffers, sizeof(void *) * buffer_count);
+        memcpy(buffers, list->buffers, sizeof(void *) * list_buffer_count);
         free(list->buffers);
     }
 
     for(uint32_t i = 0; i < buffer_count; i++)
     {
-        buffers[i + list_buffer_count] = calloc(list->buffer_size, 1);
+        buffers[i + list_buffer_count] = calloc(list->buffer_size, list->elem_size);
     }
 
     list->buffers = buffers;
-    list->size += elem_count;
 }
 
 void *get_list_element(struct list_t *list, uint32_t index)
