@@ -36,6 +36,11 @@ uint32_t add_ringbuffer_element(struct ringbuffer_t *ringbuffer, void *element)
     return index;
 }
 
+void *peek_ringbuffer_element(struct ringbuffer_t *ringbuffer)
+{
+    return (char *)ringbuffer->buffer + ringbuffer->next_out * ringbuffer->elem_size;
+}
+
 void *get_ringbuffer_element(struct ringbuffer_t *ringbuffer)
 {
     void *element = NULL;
