@@ -9,6 +9,12 @@ typedef union
     float mcomps[4][4];
 }mat4_t;
 
+typedef union
+{
+    vec3_t vcomps[3];
+    float mcomps[3][3];
+}mat3_t;
+
 
 /*
     mat4_t_mul: self-explanatory
