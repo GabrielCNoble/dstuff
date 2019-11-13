@@ -17,6 +17,18 @@ struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size)
     return stack_list;
 }
 
+void destroy_stack_list(struct stack_list_t *stack_list)
+{
+    uint32_t buffer_count = stack_list->size / stack_list->buffer_size;
+
+    for(uint32_t i = 0; i < buffer_count; i++)
+    {
+        free(stack_list->buffers[i]);
+    }
+
+    free(stack_list->free_stack);
+}
+
 void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count)
 {
     void **buffers;

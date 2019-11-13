@@ -1,7 +1,7 @@
 
 #include "obj.h"
-#include "file.h"
-#include "path.h"
+#include "..\file\file.h"
+#include "..\file\path.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -27,11 +27,6 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
     geometry_data->tangents = create_list(sizeof(vec3_t), 32);
     geometry_data->tex_coords = create_list(sizeof(vec2_t), 32);
     geometry_data->batches = create_list(sizeof(struct batch_data_t), 32);
-
-    // printf("here\n");
-//    geometry_data->materials.init(sizeof(struct material_data_t), 32);
-
-
 
     struct list_t *attrib_list;
 
@@ -63,14 +58,11 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
     char material_path[PATH_MAX];
 
     file = fopen(file_name, "rb");
-
     if(file)
     {
         read_file(file, (void **)&file_buffer, &file_size);
         fclose(file);
-
         strcpy(file_path, get_file_path(file_name));
-
         while(i < file_size)
         {
             switch(file_buffer[i])

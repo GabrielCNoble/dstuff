@@ -1,6 +1,7 @@
 #include "path.h"
 #include <string.h>
 #include <limits.h>
+#include <stdint.h>
 
 
 
@@ -14,29 +15,50 @@ char *get_file_path(char *file_name)
 
     file_name = format_path(file_name);
 
-    for(index = len; index >= 0; index--)
-    {
-        if(file_name[index] == '/')
-        {
-            break;
-        }
-    }
+    while(index && file_name[index] != '/') index--;
 
-    if(index < 0)
+    if(index)
     {
-        strcpy(path, "./");
+        strncpy(path, file_name, index);
     }
     else
     {
-        path[index] = '\0';
-
-        for(index--; index >= 0; index--)
-        {
-            path[index] = file_name[index];
-        }
+        strcpy(path, "./");
     }
 
     return path;
+}
+
+char *get_file_from_path(char *path)
+{
+    static char file_name[PATH_MAX];
+    uint32_t path_index = strlen(file_name);
+    uint32_t file_name_index = 0;
+
+    path = format_path(path);
+
+    while(path_index && path[path_index] != '/') path_index--;
+    strncpy(file_name, path + path_index, PATH_MAX);
+    return file_name;
+}
+
+char *get_file_name_no_ext(char *file_name)
+{
+    static char file_name_no_ext[PATH_MAX];
+    uint32_t index = strlen(file_name);
+
+    while(index && file_name[index] != '.') index--;
+
+    if(index)
+    {
+        strncpy(file_name_no_ext, file_name, index);
+    }
+    else
+    {
+        strcpy(file_name_no_ext, file_name);
+    }
+
+    return file_name_no_ext;
 }
 
 

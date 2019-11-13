@@ -17,6 +17,8 @@ struct stack_list_t
 
 struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size);
 
+void destroy_stack_list(struct stack_list_t *stack_list);
+
 void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count);
 
 void *get_stack_list_element(struct stack_list_t *stack_list, uint32_t index);

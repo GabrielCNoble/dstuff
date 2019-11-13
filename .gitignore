@@ -1,4 +1,5 @@
 tests
 physics
+.vscode
 *.o
 *.exe

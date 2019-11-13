@@ -1,8 +1,8 @@
 #ifndef XCHG_H
 #define XCHG_H
 
-#include "list.h"
-#include "vector.h"
+#include "..\containers\list.h"
+#include "..\math\vector.h"
 
 struct batch_data_t
 {
