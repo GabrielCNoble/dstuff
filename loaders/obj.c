@@ -115,7 +115,7 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
                     i++;
                     /* new face starts... */
                     face = (struct face_t *)get_list_element(&faces, add_list_element(&faces, NULL));
-                    face->vertices = create_list(sizeof(struct face_vertice_t), 3);
+                    face->vertices = create_list(sizeof(struct face_vertice_t), 12);
                     strcpy(face->material, current_batch->material);
 
 //                    batch = obj_GetBatch()

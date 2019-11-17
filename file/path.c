@@ -32,13 +32,17 @@ char *get_file_path(char *file_name)
 char *get_file_from_path(char *path)
 {
     static char file_name[PATH_MAX];
-    uint32_t path_index = strlen(file_name);
+    int32_t path_index = strlen(path);
     uint32_t file_name_index = 0;
 
     path = format_path(path);
 
-    while(path_index && path[path_index] != '/') path_index--;
+    while(path_index >= 0 && path[path_index] != '/') path_index--;
+    if(path_index >= 0) path_index++;
+    else path_index = 0;
+
     strncpy(file_name, path + path_index, PATH_MAX);
+    file_name[strlen(path + path_index)] = '\0';
     return file_name;
 }
 
