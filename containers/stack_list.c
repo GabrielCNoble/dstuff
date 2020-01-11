@@ -48,8 +48,8 @@ void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count)
 
     stack_list->size += elem_count;
 
-    buffers = calloc(stack_list->size, sizeof(void *));
-    free_stack = calloc(stack_list->size, sizeof(uint32_t));
+    buffers = (void**)calloc(stack_list->size, sizeof(void *));
+    free_stack = (uint32_t*)calloc(stack_list->size, sizeof(uint32_t));
 
     if(stack_list->buffers)
     {
@@ -74,7 +74,7 @@ void *get_stack_list_element(struct stack_list_t *stack_list, uint32_t index)
 
     if(index < stack_list->size)
     {
-        buffer = stack_list->buffers[index / stack_list->buffer_size];
+        buffer = (char*)stack_list->buffers[index / stack_list->buffer_size];
         element = buffer + (index % stack_list->buffer_size) * stack_list->elem_size;
     }
 
@@ -104,7 +104,7 @@ uint32_t add_stack_list_element(struct stack_list_t *stack_list, void *element)
 
     if(element && index < 0xffffffff)
     {
-        buffer = stack_list->buffers[index / stack_list->buffer_size];
+        buffer = (char*)stack_list->buffers[index / stack_list->buffer_size];
         memcpy(buffer + (index % stack_list->buffer_size) * stack_list->elem_size, element, stack_list->elem_size);
     }
 

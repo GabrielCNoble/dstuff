@@ -1,51 +1,183 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-typedef struct
+
+class vec2_t
 {
-    float comps[4];
-}vec4_t;
+    public:
 
-typedef struct
+        union
+        {
+            float comps[2];
+
+            struct
+            {
+                float x;
+                float y;
+            };
+        };
+
+        vec2_t();
+        vec2_t(float v);
+        vec2_t(float x, float y);
+
+        vec2_t operator + (const vec2_t &vec);
+        vec2_t operator += (const vec2_t &vec);
+
+        vec2_t operator - (const vec2_t &vec);
+        vec2_t operator - ();
+        vec2_t operator -= (const vec2_t &vec);
+
+        vec2_t operator * (float s) const;
+        vec2_t operator *= (float s);
+
+        vec2_t operator / (float s);
+        vec2_t operator /= (float s);
+
+        float& operator [] (int index);
+        
+};
+
+vec2_t operator * (float s, const vec2_t &vec);
+
+vec2_t operator / (float s, const vec2_t &vec);
+
+vec2_t vec2_t_normalize(vec2_t* vec);
+
+float vec2_t_length(vec2_t* vec);
+
+float vec2_t_dot(vec2_t* a, vec2_t* b);
+
+/*
+=====================================================================
+=====================================================================
+=====================================================================
+*/
+
+class mat3_t;
+
+class vec3_t
 {
-    float comps[3];
-}vec3_t;
+    public:
 
-typedef struct
+        union
+        {
+            float comps[3];
+
+            struct
+            {
+                float x;
+                float y;
+                float z;
+            };
+        };
+
+        vec3_t();
+        vec3_t(float v);
+        vec3_t(float x, float y, float z);
+
+        vec3_t operator + (const vec3_t &vec) const;
+        vec3_t operator += (const vec3_t &vec);
+
+        vec3_t operator - (const vec3_t &vec) const;
+        vec3_t operator - ();
+        vec3_t operator -= (const vec3_t &vec);
+
+        vec3_t operator * (float s) const;
+        vec3_t operator * (const mat3_t &mat) const;
+        vec3_t operator *= (float s);
+
+        vec3_t operator / (float s);
+        vec3_t operator /= (float s);
+
+        float& operator [] (int index);
+};
+
+vec3_t operator * (float s, const vec3_t &vec);
+
+vec3_t operator / (float s, const vec3_t &vec);
+
+vec3_t vec3_t_normalize(const vec3_t& vec);
+
+float vec3_t_length(const vec3_t& vec);
+
+float vec3_t_dot(const vec3_t& a, const vec3_t& b);
+
+vec3_t vec3_t_cross(const vec3_t& a, const vec3_t& b);
+
+vec3_t vfabs(const vec3_t& vec);
+
+
+/*
+=====================================================================
+=====================================================================
+=====================================================================
+*/
+
+
+class mat4_t;
+class vec4_t
 {
-    float comps[2];
-}vec2_t;
+    public:
 
-#define vec4_t_zero (vec4_t){0.0, 0.0, 0.0, 0.0}
-#define vec3_t_zero (vec3_t){0.0, 0.0, 0.0}
-#define vec2_t_zero (vec2_t){0.0, 0.0}
+        union
+        {
+            float comps[4];
 
-void vec4_t_add(vec4_t *r, vec4_t *a, vec4_t *b);
+            struct
+            {
+                float x;
+                float y;
+                float z;
+                float w;
+            };
+        };
 
-void vec4_t_sub(vec4_t *r, vec4_t *a, vec4_t *b);
+        vec4_t();
+        vec4_t(float v);
+        vec4_t(float x, float y, float z, float w);
+        vec4_t(const vec3_t& vec3, float w);
 
-void vec4_t_mul(vec4_t *r, float m);
+        vec4_t operator + (const vec4_t &vec);
+        vec4_t operator += (const vec4_t &vec);
 
-float vec4_t_dot(vec4_t *a, vec4_t *b);
+        vec4_t operator - (const vec4_t &vec);
+        vec4_t operator - ();
+        vec4_t operator -= (const vec4_t &vec);
 
-float vec4_t_len(vec4_t *v);
+        vec4_t operator * (float s) const;
+        vec4_t operator * (const mat4_t &mat) const;
+        vec4_t operator *= (float s);
 
-void vec4_t_normalize(vec4_t *v);
+        vec4_t operator / (float s);
+        vec4_t operator /= (float s);
+
+        float& operator [] (int index);
+
+        // float length() const;
+};
+
+vec4_t operator * (float s, const vec4_t &vec);
+
+vec4_t operator / (float s, const vec4_t &vec);
+
+vec4_t vec4_t_normalize(const vec4_t& vec);
+
+float vec4_t_length(const vec4_t& vec);
+
+float vec4_t_dot(const vec4_t& a, vec4_t& b);
 
 
 
-void vec3_t_add(vec3_t *r, vec3_t *a, vec3_t *b);
 
-void vec3_t_sub(vec3_t *r, vec3_t *a, vec3_t *b);
+#endif // VECTOR_H
 
-void vec3_t_mul(vec3_t *r, float m);
 
-float vec3_t_dot(vec3_t *a, vec3_t *b);
 
-void vec3_t_cross(vec3_t *r, vec3_t *a, vec3_t *b);
 
-float vec3_t_len(vec3_t *v);
 
-void vec3_t_normalize(vec3_t *v);
 
-#endif
+
+
+
+

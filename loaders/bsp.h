@@ -129,6 +129,7 @@ enum BSP_FACE_TYPE
     BSP_FACE_TYPE_BILLBOARD = 4,
 };
 
+/* TODO: load bezier patches*/
 struct bsp_face_t
 {
     int32_t texture;

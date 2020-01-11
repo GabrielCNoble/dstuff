@@ -524,7 +524,7 @@ struct batch_data_t *get_wavefront_batch(char *material_name, struct geometry_da
 
     for(i = 0; i < c; i++)
     {
-        batch = get_list_element(&geometry_data->batches, i);
+        batch = (struct batch_data_t*)get_list_element(&geometry_data->batches, i);
 
         if(!strcmp(material_name, batch->material))
         {
@@ -534,7 +534,7 @@ struct batch_data_t *get_wavefront_batch(char *material_name, struct geometry_da
 
     for(i = 0; i < c; i++)
     {
-        batch = get_list_element(&geometry_data->batches, i);
+        batch = (struct batch_data_t*)get_list_element(&geometry_data->batches, i);
         
         if(!strcmp(DEFAULT_MATERIAL_NAME, batch->material))
         {

@@ -45,28 +45,28 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
     if(file)
     {
         read_file(file, &file_buffer, &file_size);
-        header = file_buffer;
+        header = (struct bsp_header_t*)file_buffer;
 
         if(strncmp(header->magic, "IBSP", 4))
         {
             printf("%s is not a valid bsp file!\n", file_name);
         }
 
-        printf("entity string is %d bytes long\n", header->direntries[BSP_LUMP_ENTITIES].length);
-        printf("%d textures present\n", header->direntries[BSP_LUMP_TEXTURES].length / sizeof(struct bsp_texture_t));
-        printf("%d planes present\n", header->direntries[BSP_LUMP_PLANES].length / sizeof(struct bsp_plane_t));
-        printf("%d nodes present\n", header->direntries[BSP_LUMP_NODES].length / sizeof(struct bsp_node_t));
-        printf("%d leafs present\n", header->direntries[BSP_LUMP_LEAFS].length / sizeof(struct bsp_leaf_t));
-        printf("%d leaffaces present\n", header->direntries[BSP_LUMP_LEAFFACES].length / sizeof(struct bsp_leafface_t));
-        printf("%d models present\n", header->direntries[BSP_LUMP_MODELS].length / sizeof(struct bsp_model_t));
-        printf("%d brushes present\n", header->direntries[BSP_LUMP_BRUSHES].length / sizeof(struct bsp_brush_t));
-        printf("%d brushsides present\n", header->direntries[BSP_LUMP_BRUSHSIDES].length / sizeof(struct bsp_brushside_t));
-        printf("%d vertexes present\n", header->direntries[BSP_LUMP_VERTEXES].length / sizeof(struct bsp_vertex_t));
-        printf("%d meshverts present\n", header->direntries[BSP_LUMP_MESHVERTS].length / sizeof(struct bsp_meshvert_t));
-        printf("%d effects present\n", header->direntries[BSP_LUMP_EFFECTS].length / sizeof(struct bsp_effect_t));
-        printf("%d faces present\n", header->direntries[BSP_LUMP_FACES].length / sizeof(struct bsp_face_t));
-        printf("%d lightmaps present\n", header->direntries[BSP_LUMP_LIGHTMAPS].length / sizeof(struct bsp_lightmap_t));
-        printf("%d lightvols present\n", header->direntries[BSP_LUMP_LIGHTVOLS].length / sizeof(struct bsp_lightvol_t));
+        // printf("entity string is %d bytes long\n", header->direntries[BSP_LUMP_ENTITIES].length);
+        // printf("%d textures present\n", header->direntries[BSP_LUMP_TEXTURES].length / sizeof(struct bsp_texture_t));
+        // printf("%d planes present\n", header->direntries[BSP_LUMP_PLANES].length / sizeof(struct bsp_plane_t));
+        // printf("%d nodes present\n", header->direntries[BSP_LUMP_NODES].length / sizeof(struct bsp_node_t));
+        // printf("%d leafs present\n", header->direntries[BSP_LUMP_LEAFS].length / sizeof(struct bsp_leaf_t));
+        // printf("%d leaffaces present\n", header->direntries[BSP_LUMP_LEAFFACES].length / sizeof(struct bsp_leafface_t));
+        // printf("%d models present\n", header->direntries[BSP_LUMP_MODELS].length / sizeof(struct bsp_model_t));
+        // printf("%d brushes present\n", header->direntries[BSP_LUMP_BRUSHES].length / sizeof(struct bsp_brush_t));
+        // printf("%d brushsides present\n", header->direntries[BSP_LUMP_BRUSHSIDES].length / sizeof(struct bsp_brushside_t));
+        // printf("%d vertexes present\n", header->direntries[BSP_LUMP_VERTEXES].length / sizeof(struct bsp_vertex_t));
+        // printf("%d meshverts present\n", header->direntries[BSP_LUMP_MESHVERTS].length / sizeof(struct bsp_meshvert_t));
+        // printf("%d effects present\n", header->direntries[BSP_LUMP_EFFECTS].length / sizeof(struct bsp_effect_t));
+        // printf("%d faces present\n", header->direntries[BSP_LUMP_FACES].length / sizeof(struct bsp_face_t));
+        // printf("%d lightmaps present\n", header->direntries[BSP_LUMP_LIGHTMAPS].length / sizeof(struct bsp_lightmap_t));
+        // printf("%d lightvols present\n", header->direntries[BSP_LUMP_LIGHTVOLS].length / sizeof(struct bsp_lightvol_t));
 
         // vert_count = header->direntries[BSP_LUMP_VERTEXES].length / sizeof(struct bsp_vertex_t);
         face_count = header->direntries[BSP_LUMP_FACES].length / sizeof(struct bsp_face_t);
@@ -134,7 +134,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
 
         /* now use the amount of vertices on each batch to
         compute where they start */
-        batches = data->batches.buffers[0];
+        batches = (struct batch_data_t*)data->batches.buffers[0];
         for(uint32_t i = 1; i < data->batches.cursor; i++)
         {
             batches[i].start = batches[i - 1].start + batches[i - 1].count;
@@ -153,9 +153,9 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
         time the list resizes, a new buffer gets allocd and linked
         at the end. Here, however, we know exactly how many verts
         we have, so doing this makes things easier */
-        vertices = data->vertices.buffers[0];
-        normals = data->normals.buffers[0];
-        tex_coords = data->tex_coords.buffers[0];
+        vertices = (vec3_t*)data->vertices.buffers[0];
+        normals = (vec3_t*)data->normals.buffers[0];
+        tex_coords = (vec2_t*)data->tex_coords.buffers[0];
 
         for(uint32_t i = 0; i < face_count; i++)
         {
@@ -181,7 +181,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
                     normals[vert_index].comps[1] = bsp_vertex->normal[2];
                     normals[vert_index].comps[2] = bsp_vertex->normal[1];
 
-                    tex_coords[vert_index].comps[0] = -bsp_vertex->texcoord[0][0];
+                    tex_coords[vert_index].comps[0] = bsp_vertex->texcoord[0][0];
                     tex_coords[vert_index].comps[1] = bsp_vertex->texcoord[0][1];
 
                     face_batch->count++;
@@ -189,7 +189,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
             }
             else if(bsp_face->type == BSP_FACE_TYPE_PATCH)
             {
-                printf("fuck...\n");
+                // printf("fuck...\n");
             }
         }
 
@@ -220,7 +220,7 @@ struct batch_data_t *get_bsp_batch(char *name, struct geometry_data_t *data)
 
     for(uint32_t i = 0; i < data->batches.cursor; i++)
     {
-        batch = get_list_element(&data->batches, i);
+        batch = (struct batch_data_t*)get_list_element(&data->batches, i);
 
         if(!strcmp(name, batch->material))
         {
