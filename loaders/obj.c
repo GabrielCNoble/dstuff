@@ -310,7 +310,7 @@ void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data)
 //    struct material_data_t *current_material = NULL;
     struct batch_data_t *current_batch = NULL;
     int value_str_index;
-    unsigned short material_handle;
+//    unsigned short material_handle;
     char value_str[64];
     vec4_t color;
     FILE *file;
@@ -535,7 +535,7 @@ struct batch_data_t *get_wavefront_batch(char *material_name, struct geometry_da
     for(i = 0; i < c; i++)
     {
         batch = (struct batch_data_t*)get_list_element(&geometry_data->batches, i);
-        
+
         if(!strcmp(DEFAULT_MATERIAL_NAME, batch->material))
         {
             return batch;

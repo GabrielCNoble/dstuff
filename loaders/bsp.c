@@ -18,14 +18,14 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
     struct bsp_face_t *bsp_face;
     struct bsp_meshvert_t *bsp_meshverts;
     struct bsp_meshvert_t *bsp_face_meshverts;
-    struct bsp_meshvert_t *bsp_meshvert;
+//    struct bsp_meshvert_t *bsp_meshvert;
     struct bsp_texture_t *bsp_textures;
     struct bsp_texture_t *bsp_texture;
     // struct geometry_data_t data;
     struct batch_data_t batch;
     struct batch_data_t *face_batch;
-    vec3_t vec3;
-    vec2_t vec2;
+//    vec3_t vec3;
+//    vec2_t vec2;
     char texture_name[64];
 
     // struct list_t vertices;
@@ -52,25 +52,9 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
             printf("%s is not a valid bsp file!\n", file_name);
         }
 
-        // printf("entity string is %d bytes long\n", header->direntries[BSP_LUMP_ENTITIES].length);
-        // printf("%d textures present\n", header->direntries[BSP_LUMP_TEXTURES].length / sizeof(struct bsp_texture_t));
-        // printf("%d planes present\n", header->direntries[BSP_LUMP_PLANES].length / sizeof(struct bsp_plane_t));
-        // printf("%d nodes present\n", header->direntries[BSP_LUMP_NODES].length / sizeof(struct bsp_node_t));
-        // printf("%d leafs present\n", header->direntries[BSP_LUMP_LEAFS].length / sizeof(struct bsp_leaf_t));
-        // printf("%d leaffaces present\n", header->direntries[BSP_LUMP_LEAFFACES].length / sizeof(struct bsp_leafface_t));
-        // printf("%d models present\n", header->direntries[BSP_LUMP_MODELS].length / sizeof(struct bsp_model_t));
-        // printf("%d brushes present\n", header->direntries[BSP_LUMP_BRUSHES].length / sizeof(struct bsp_brush_t));
-        // printf("%d brushsides present\n", header->direntries[BSP_LUMP_BRUSHSIDES].length / sizeof(struct bsp_brushside_t));
-        // printf("%d vertexes present\n", header->direntries[BSP_LUMP_VERTEXES].length / sizeof(struct bsp_vertex_t));
-        // printf("%d meshverts present\n", header->direntries[BSP_LUMP_MESHVERTS].length / sizeof(struct bsp_meshvert_t));
-        // printf("%d effects present\n", header->direntries[BSP_LUMP_EFFECTS].length / sizeof(struct bsp_effect_t));
-        // printf("%d faces present\n", header->direntries[BSP_LUMP_FACES].length / sizeof(struct bsp_face_t));
-        // printf("%d lightmaps present\n", header->direntries[BSP_LUMP_LIGHTMAPS].length / sizeof(struct bsp_lightmap_t));
-        // printf("%d lightvols present\n", header->direntries[BSP_LUMP_LIGHTVOLS].length / sizeof(struct bsp_lightvol_t));
-
         // vert_count = header->direntries[BSP_LUMP_VERTEXES].length / sizeof(struct bsp_vertex_t);
         face_count = header->direntries[BSP_LUMP_FACES].length / sizeof(struct bsp_face_t);
-        texture_count = header->direntries[BSP_LUMP_TEXTURES].length / sizeof(struct bsp_texture_t); 
+        texture_count = header->direntries[BSP_LUMP_TEXTURES].length / sizeof(struct bsp_texture_t);
 
 
         bsp_vertices = (struct bsp_vertex_t *)((char *)file_buffer + header->direntries[BSP_LUMP_VERTEXES].offset);
@@ -79,7 +63,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
         bsp_textures = (struct bsp_texture_t *)((char *)file_buffer + header->direntries[BSP_LUMP_TEXTURES].offset);
 
 
-        data->batches = create_list(sizeof(struct batch_data_t), texture_count); 
+        data->batches = create_list(sizeof(struct batch_data_t), texture_count);
 
 
         for(uint32_t i = 0; i < texture_count; i++)
@@ -123,13 +107,13 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
 
                 bsp_texture = bsp_textures + bsp_face->texture;
                 face_batch = get_bsp_batch(bsp_texture->name, data);
-                /* also, increment the number of vertices for the material 
+                /* also, increment the number of vertices for the material
                 this face uses */
                 face_batch->count += bsp_face->n_meshverts;
             }
         }
 
-        
+
         // printf("1\n");
 
         /* now use the amount of vertices on each batch to
@@ -138,10 +122,10 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
         for(uint32_t i = 1; i < data->batches.cursor; i++)
         {
             batches[i].start = batches[i - 1].start + batches[i - 1].count;
-            batches[i - 1].count = 0;   
+            batches[i - 1].count = 0;
         }
         batches[data->batches.cursor - 1].count = 0;
-        
+
         // printf("2\n");
 
         data->vertices = create_list(sizeof(vec3_t), vert_count);
@@ -185,7 +169,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
                     tex_coords[vert_index].comps[1] = bsp_vertex->texcoord[0][1];
 
                     face_batch->count++;
-                }    
+                }
             }
             else if(bsp_face->type == BSP_FACE_TYPE_PATCH)
             {
@@ -196,7 +180,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
         // for(uint32_t i = 0; i < data->batches.cursor; i++)
         // {
         //     printf("%d: start: %d -- count: %d\n", i, batches[i].start, batches[i].count);
-        // }   
+        // }
 
         data->vertices.cursor = vert_count;
         data->normals.cursor = vert_count;
@@ -209,7 +193,7 @@ void load_bsp(char *file_name, struct geometry_data_t *data)
 
         // data->batches.cursor = 1;
 
-        
+
         // printf("3\n");
     }
 }

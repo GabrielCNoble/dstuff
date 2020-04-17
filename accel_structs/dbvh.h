@@ -36,13 +36,17 @@ void dealloc_dbvh_node(struct dbvh_tree_t *tree, int node_index);
 
 void dealloc_all_dbvh_nodes(struct dbvh_tree_t *tree);
 
+void insert_node_into_dbvh(struct dbvh_tree_t* tree, uint32_t node_index);
+
+void pair_dbvh_nodes(struct dbvh_tree_t *tree, uint32_t to_pair_index, uint32_t pair_to_index);
+
 void remove_node_from_dbvh(struct dbvh_tree_t *tree, uint32_t node_index);
 
 struct dbvh_node_t *get_dbvh_node_pointer(struct dbvh_tree_t *tree, uint32_t node_index);
 
 struct dbvh_node_t *get_sibling_node_pointer(struct dbvh_tree_t *tree, uint32_t node_index);
 
-void pair_dbvh_nodes(struct dbvh_tree_t *tree, uint32_t to_pair_index, uint32_t pair_to_index);
+uint32_t nodes_smallest_volume(struct dbvh_tree_t* tree, uint32_t node_index);
 
 uint32_t box_overlap(vec3_t *a_max, vec3_t *a_min, vec3_t *b_max, vec3_t *b_min);
 
