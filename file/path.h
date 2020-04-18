@@ -4,15 +4,19 @@
 #include <stdint.h>
 #include <dirent.h>
 
-char *get_file_path(char *file_name);
+char *strip_file_name_from_path(char *path);
 
-char *get_file_from_path(char *file_name);
+char *strip_path_from_file_name(char *path);
 
-char *get_file_name_no_ext(char *file_name);
+char *strip_path_from_ext(char *path);
+
+char *strip_ext_from_path(char *path);
+
+int32_t get_index_from_path(char *path);
 
 char *format_path(char *path);
 
-char *append_path_segment(char *path, char *segment);
+char *append_path(char *path, char *append);
 
 uint32_t is_dir(char *path);
 
@@ -24,35 +28,34 @@ uint32_t is_dir(char *path);
 #include <string.h>
 #include <limits.h>
 
-char *get_file_path(char *file_name)
+char *strip_file_name_from_path(char *path)
 {
-    static char path[PATH_MAX];
+    static char stripped_path[PATH_MAX];
     int index;
     int len;
 
-    len = strlen(file_name);
+    len = strlen(path);
 
-    file_name = format_path(file_name);
+    path = format_path(path);
 
-    while(index && file_name[index] != '/') index--;
+    while(index && path[index] != '/') index--;
 
     if(index)
     {
-        strncpy(path, file_name, index);
+        strncpy(stripped_path, path, index);
     }
     else
     {
-        strcpy(path, "./");
+        strcpy(stripped_path, "./");
     }
 
-    return path;
+    return stripped_path;
 }
 
-char *get_file_from_path(char *path)
+char *strip_path_from_file_name(char *path)
 {
     static char file_name[PATH_MAX];
     int32_t path_index = strlen(path);
-//    uint32_t file_name_index = 0;
 
     path = format_path(path);
 
@@ -65,25 +68,94 @@ char *get_file_from_path(char *path)
     return file_name;
 }
 
-char *get_file_name_no_ext(char *file_name)
+char *strip_path_from_ext(char *path)
 {
-    static char file_name_no_ext[PATH_MAX];
-    uint32_t index = strlen(file_name);
+    static char stripped_path[PATH_MAX];
+    uint32_t index = strlen(path);
 
-    while(index && file_name[index] != '.') index--;
+    while(index && path[index] != '.') index--;
 
     if(index)
     {
-        strncpy(file_name_no_ext, file_name, index);
+        strncpy(stripped_path, path, index);
     }
     else
     {
-        strcpy(file_name_no_ext, file_name);
+        strcpy(stripped_path, path);
     }
 
-    return file_name_no_ext;
+    return stripped_path;
 }
 
+char *strip_ext_from_path(char *path)
+{
+    static char stripped_path[PATH_MAX];
+    uint32_t index = strlen(path);
+
+    while(index && path[index] != '.') index--;
+    if(index)
+    {
+        strcpy(stripped_path, path + index + 1);
+    }
+    else
+    {
+        stripped_path[0] = '\0';
+    }
+
+    return stripped_path;
+}
+
+int32_t get_index_from_path(char *path)
+{
+    int32_t last_dot;
+    int32_t first_dot;
+    uint32_t index;
+    char value_str[64];
+    uint32_t value_str_index;
+    last_dot = strlen(path);
+
+    while(last_dot >= 0)
+    {
+        while(last_dot >= 0 && path[last_dot] != '.') last_dot--;
+
+        first_dot = last_dot - 1;
+
+        while(first_dot >= 0 && path[first_dot] != '.') first_dot--;
+
+        if(first_dot >= 0)
+        {
+            /* if we got here, we found something of the form  '.'(first_dot)?(may be a number, may be empty)'.'(last_dot).
+            Now we test to see if it's a valid number */
+            for(index = first_dot + 1, value_str_index = 0; index < last_dot; index++)
+            {
+                if(path[index] >= '0' && path[index] <= '9')
+                {
+                    value_str[value_str_index] = path[index];
+                    value_str_index++;
+                }
+                else
+                {
+                    /* not a valid number, so restart the search from the first '.' */
+                    last_dot = first_dot;
+                    break;
+                }
+            }
+
+            value_str[value_str_index] = '\0';
+            if(value_str_index)
+            {
+                /* found a valid number */
+                return atoi(value_str);
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return -1;
+}
 
 char *format_path(char *path)
 {
@@ -115,7 +187,35 @@ char *format_path(char *path)
     return formatted_path;
 }
 
-char *append_path_segment(char *path, char *segment)
+char *add_file_name_ext(char *file_name, char *ext)
+{
+    static char file_name_ext[PATH_MAX];
+    int32_t index;
+    if(strcmp(strip_path_from_ext(file_name), ext))
+    {
+        strcpy(file_name_ext, file_name);
+        index = strlen(file_name_ext);
+
+        while(index >= 0 && (file_name_ext[index] == ' ' || file_name_ext[index] == '\n' ||
+                                file_name_ext[index] == '.'))
+        {
+            index--;
+        }
+
+        if(index >= 0)
+        {
+            file_name_ext[index] = '\0';
+        }
+
+        strcat(file_name_ext, ".");
+        strcat(file_name_ext, ext);
+        return file_name_ext;
+    }
+
+    return file_name;
+}
+
+char *append_path(char *path, char *append)
 {
     static char new_path[PATH_MAX];
 
@@ -129,7 +229,7 @@ char *append_path_segment(char *path, char *segment)
         strcat(new_path, "/");
     }
 
-    strcat(new_path, format_path(segment));
+    strcat(new_path, format_path(append));
 
     return new_path;
 }
