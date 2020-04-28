@@ -353,7 +353,8 @@ struct context_t{void *data; uint32_t size;};
 void write_sprite_sheet_pixels(void *context, void *data, int size)
 {
       struct context_t *result = context;
-      result->data = data;
+      result->data = calloc(1, size);
+      memcpy(result->data, data, size);
       result->size = size;
 }
 
