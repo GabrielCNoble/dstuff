@@ -50,7 +50,7 @@ struct sprite_sheet_t
     struct region_t *free_regions;
     uint32_t used_region_count;
     struct region_t *used_regions;
-    void *header;
+    struct header_t *header;
     uint32_t header_size;
 };
 
@@ -346,13 +346,13 @@ void build_entries(struct sprite_sheet_t *sprite_sheet)
     sprite_sheet->header_size = header->data_offset;
 }
 
-struct context_t{void *data, uint32_t size};
+struct context_t{void *data; uint32_t size;};
 
 void write_sprite_sheet_pixels(void *context, void *data, int size)
 {
-      struct context_t *data = context;
-      data->data = data;
-      data->size = size;
+      struct context_t *result = context;
+      result->data = data;
+      result->size = size;
 }
 
 void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, uint32_t color_free_regions)
@@ -360,9 +360,8 @@ void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, 
     uint32_t output_row_pitch;
     struct region_t *region;
     uint32_t *output_pixels;
-    void *compressed_pixels;
     FILE *file;
-    struct context_t context;
+    struct context_t result;
 
     output_row_pitch = sprite_sheet->width * STBI_rgb_alpha;
     output_pixels = calloc(sprite_sheet->height, output_row_pitch);
@@ -417,14 +416,14 @@ void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, 
         }
     }
 
-    stbi_write_png_to_func(write_sprite_sheet_pixels, &context,
+    stbi_write_png_to_func(write_sprite_sheet_pixels, &result,
                         sprite_sheet->width, sprite_sheet->height, 4, output_pixels, output_row_pitch);
 
-    header->data_size = context->size;
+    sprite_sheet->header->data_size = result.size;
 
     file = fopen(output_name, "wb");
     fwrite(sprite_sheet->header, 1, sprite_sheet->header_size, file);
-    fwrite(context->data, 1, context->data_size, file);
+    fwrite(result.data, 1, result.size, file);
     fclose(file);
 }
 
