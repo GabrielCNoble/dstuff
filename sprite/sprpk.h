@@ -39,6 +39,7 @@ struct header_t
     uint32_t entry_count;
     uint32_t frame_count;
     uint32_t data_offset;
+    uint32_t data_size;
 };
 
 struct sprite_sheet_t
@@ -61,9 +62,11 @@ void build_entries(struct sprite_sheet_t *sprite_sheet);
 
 void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, uint32_t color_free_regions);
 
-void read_sprpk(char *file_name, struct header_t **header);
+void read_sprpk(char *file_name, struct header_t **header, uint32_t *size);
 
 void get_sprpk_entry(struct header_t *header, struct entry_t **entry, uint32_t entry_index);
+
+void get_sprpk_data(struct header_t *header, void **data);
 
 #ifdef DSTUFF_SPRITE_SPRPK_IMPLEMENTATION
 
@@ -343,10 +346,13 @@ void build_entries(struct sprite_sheet_t *sprite_sheet)
     sprite_sheet->header_size = header->data_offset;
 }
 
+struct context_t{void *data, uint32_t size};
+
 void write_sprite_sheet_pixels(void *context, void *data, int size)
 {
-    FILE *file = (FILE *)context;
-    fwrite(data, 1, size, file);
+      struct context_t *data = context;
+      data->data = data;
+      data->size = size;
 }
 
 void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, uint32_t color_free_regions)
@@ -354,7 +360,9 @@ void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, 
     uint32_t output_row_pitch;
     struct region_t *region;
     uint32_t *output_pixels;
+    void *compressed_pixels;
     FILE *file;
+    struct context_t context;
 
     output_row_pitch = sprite_sheet->width * STBI_rgb_alpha;
     output_pixels = calloc(sprite_sheet->height, output_row_pitch);
@@ -409,13 +417,18 @@ void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, 
         }
     }
 
+    stbi_write_png_to_func(write_sprite_sheet_pixels, &context,
+                        sprite_sheet->width, sprite_sheet->height, 4, output_pixels, output_row_pitch);
+
+    header->data_size = context->size;
+
     file = fopen(output_name, "wb");
     fwrite(sprite_sheet->header, 1, sprite_sheet->header_size, file);
-    stbi_write_png_to_func(write_sprite_sheet_pixels, file, sprite_sheet->width, sprite_sheet->height, 4, output_pixels, output_row_pitch);
+    fwrite(context->data, 1, context->data_size, file);
     fclose(file);
 }
 
-void read_sprpk(char *file_name, struct header_t **header)
+void read_sprpk(char *file_name, struct header_t **header, uint32_t *size)
 {
     struct header_t *header_ptr;
     long header_size;
@@ -429,6 +442,7 @@ void read_sprpk(char *file_name, struct header_t **header)
         if(!strcmp(header_ptr->tag, header_tag))
         {
             *header = header_ptr;
+            *size = (uint32_t)header_size;
         }
     }
 }
@@ -449,6 +463,10 @@ void get_sprpk_entry(struct header_t *header, struct entry_t **entry, uint32_t e
     }
 }
 
+void get_sprpk_data(struct header_t *header, void **data)
+{
+    *data = (char *)header + header->data_offset;
+}
 
 #endif
 
