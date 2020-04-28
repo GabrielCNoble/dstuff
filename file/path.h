@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 #include <dirent.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
 char *strip_file_name_from_path(char *path);
 
@@ -26,9 +29,6 @@ uint32_t is_dir(char *path);
 
 
 #ifdef DSTUFF_FILE_PATH_IMPLEMENTATION
-
-#include <string.h>
-#include <limits.h>
 
 char *strip_file_name_from_path(char *path)
 {
