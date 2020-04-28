@@ -78,6 +78,8 @@ void mat4_t_invvm(mat4_t *r, mat4_t *m);
 
 void mat4_t_persp(mat4_t* m, float fov_y, float aspect, float z_near, float z_far);
 
+void mat4_t_ortho(mat4_t *m, float width, float height, float z_near, float z_far);
+
 void mat4_t_pitch(mat4_t* m, float pitch);
 
 void mat4_t_yaw(mat4_t* m, float yaw);
@@ -283,6 +285,16 @@ void mat4_t_persp(mat4_t* m, float fov_y, float aspect, float z_near, float z_fa
     m->comps[2][3] = -1.0;
     m->comps[3][2] = (-(2.0 * z_near * z_far) / (z_far - z_near)) * 0.5;
     m->comps[3][3] = 0.0;
+}
+
+void mat4_t_ortho(mat4_t *m, float width, float height, float z_near, float z_far)
+{
+    mat4_t_identity(m);
+
+    m->comps[0][0] =  2.0 / width;
+    m->comps[1][1] = -2.0 / height;
+    m->comps[2][2] = 1.0 / (z_far - z_near);
+    m->comps[3][2] = (z_far + z_near) / (z_far - z_near);
 }
 
 void mat4_t_pitch(mat4_t* m, float pitch)
