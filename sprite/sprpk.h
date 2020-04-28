@@ -36,6 +36,8 @@ static char header_tag[] = "sprpk_header";
 struct header_t
 {
     char tag[(sizeof(header_tag) + 3) & (~3)];
+    uint32_t width;
+    uint32_t height;
     uint32_t entry_count;
     uint32_t frame_count;
     uint32_t data_offset;
@@ -420,6 +422,8 @@ void write_sprite_sheet(char *output_name, struct sprite_sheet_t *sprite_sheet, 
                         sprite_sheet->width, sprite_sheet->height, 4, output_pixels, output_row_pitch);
 
     sprite_sheet->header->data_size = result.size;
+    sprite_sheet->header->width = sprite_sheet->width;
+    sprite_sheet->header->height = sprite_sheet->height;
 
     file = fopen(output_name, "wb");
     fwrite(sprite_sheet->header, 1, sprite_sheet->header_size, file);
