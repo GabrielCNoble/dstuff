@@ -12,6 +12,8 @@ char *strip_path_from_ext(char *path);
 
 char *strip_ext_from_path(char *path);
 
+char *strip_decorations_from_path(char *path);
+
 int32_t get_index_from_path(char *path);
 
 char *format_path(char *path);
@@ -31,23 +33,20 @@ uint32_t is_dir(char *path);
 char *strip_file_name_from_path(char *path)
 {
     static char stripped_path[PATH_MAX];
-    int index;
-    int len;
-
-    len = strlen(path);
-
+    uint32_t index;
+    uint32_t length;
+    length = strlen(path);
+    index = length;
     path = format_path(path);
-
     while(index && path[index] != '/') index--;
 
-    if(index)
+    if(!index || index == length)
     {
-        strncpy(stripped_path, path, index);
+        return path;
     }
-    else
-    {
-        strcpy(stripped_path, "./");
-    }
+
+    strncpy(stripped_path, path, index);
+    stripped_path[index] = '\0';
 
     return stripped_path;
 }
@@ -68,16 +67,26 @@ char *strip_path_from_file_name(char *path)
     return file_name;
 }
 
-char *strip_path_from_ext(char *path)
+char *strip_ext_from_path(char *path)
 {
     static char stripped_path[PATH_MAX];
-    uint32_t index = strlen(path);
+    uint32_t length = strlen(path);
+    uint32_t index = length;
 
-    while(index && path[index] != '.') index--;
+    while(index && path[index] != '.')
+    {
+        if(path[index] == '/' || path[index]  == '\\')
+        {
+            index = length;
+            break;
+        }
+        index--;
+    }
 
     if(index)
     {
         strncpy(stripped_path, path, index);
+        stripped_path[index] = '\0';
     }
     else
     {
@@ -87,19 +96,42 @@ char *strip_path_from_ext(char *path)
     return stripped_path;
 }
 
-char *strip_ext_from_path(char *path)
+char *strip_path_from_ext(char *path)
 {
     static char stripped_path[PATH_MAX];
     uint32_t index = strlen(path);
 
     while(index && path[index] != '.') index--;
-    if(index)
+    if(!index)
     {
-        strcpy(stripped_path, path + index + 1);
+        return path;
     }
-    else
+
+    strcpy(stripped_path, path + index + 1);
+    stripped_path[0] = '\0';
+
+    return stripped_path;
+}
+
+char *strip_decorations_from_path(char *path)
+{
+    static char stripped_path[PATH_MAX];
+    char *current_stripped_path;
+    uint32_t length;
+    uint32_t current_length;
+
+    strcpy(stripped_path, path);
+    length = strlen(stripped_path);
+    while(1)
     {
-        stripped_path[0] = '\0';
+        current_stripped_path = strip_ext_from_path(stripped_path);
+        current_length = strlen(current_stripped_path);
+        if(current_length == length)
+        {
+            break;
+        }
+        strcpy(stripped_path, current_stripped_path);
+        length = current_length;
     }
 
     return stripped_path;
