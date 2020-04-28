@@ -54,7 +54,7 @@ uint32_t add_ringbuffer_element(struct ringbuffer_t *ringbuffer, void *element)
         }
 
         ringbuffer->next_in = (ringbuffer->next_in + 1) % ringbuffer->buffer_size;
-        ringbuffer->free_slots--; 
+        ringbuffer->free_slots--;
     }
 
     return index;
