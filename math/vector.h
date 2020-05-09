@@ -18,7 +18,7 @@ typedef struct vec2_t
 
 }vec2_t;
 
-#define vec2_t_c(x, y) (vec2_t){x, y}
+#define vec2_t_c(x, y) (vec2_t){{{x, y}}}
 
 // vec2_t operator * (float s, const vec2_t &vec);
 
@@ -51,7 +51,7 @@ typedef struct vec3_t
     };
 }vec3_t;
 
-#define vec3_t_c(x, y, z) (vec3_t){x, y, z}
+#define vec3_t_c(x, y, z) (vec3_t){{{x, y, z}}}
 
 void vec3_t_add(vec3_t *r, vec3_t *a, vec3_t *b);
 
@@ -96,7 +96,7 @@ typedef struct vec4_t
 
 }vec4_t;
 
-#define vec4_t_c(x, y, z, w) (vec4_t){x, y, z, w}
+#define vec4_t_c(x, y, z, w) (vec4_t){{{x, y, z, w}}}
 
 void vec4_t_add(vec4_t *r, vec4_t *a, vec4_t *b);
 
@@ -177,7 +177,7 @@ float vec3_t_dot(vec3_t *a, vec3_t *b)
 
 void vec3_t_cross(vec3_t *r, vec3_t *a, vec3_t *b)
 {
-    *r = (vec3_t){a->z * b->y - a->y * b->z, a->x * b->z - a->z * b->x, a->y * b->x - a->x * b->y};
+    *r = (vec3_t){{.x = a->z * b->y - a->y * b->z, .y = a->x * b->z - a->z * b->x, .z = a->y * b->x - a->x * b->y}};
 }
 
 void vec3_t_fabs(vec3_t *r, vec3_t *v)
@@ -191,9 +191,9 @@ void vec3_t_fmadd(vec3_t *r, vec3_t *a, vec3_t *b, float s)
 {
     *r = (vec3_t)
     {
-        fmaf(a->x, b->x, s),
-        fmaf(a->y, b->y, s),
-        fmaf(a->z, b->z, s),
+        .x = fmaf(a->x, b->x, s),
+        .y = fmaf(a->y, b->y, s),
+        .z = fmaf(a->z, b->z, s),
     };
 }
 

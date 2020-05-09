@@ -95,50 +95,50 @@ void mat4_t_yaw(mat4_t* m, float yaw);
 void mat4_t_comp(mat4_t *r, mat3_t *rot, vec3_t *pos)
 {
     *r = (mat4_t)
-    {
-        rot->comps[0][0], rot->comps[0][1], rot->comps[0][2], 0.0,
-        rot->comps[1][0], rot->comps[1][1], rot->comps[1][2], 0.0,
-        rot->comps[2][0], rot->comps[2][1], rot->comps[2][2], 0.0,
-        pos->comps[0],    pos->comps[1],    pos->comps[2],    1.0
-    };
+    {{{
+        {rot->comps[0][0], rot->comps[0][1], rot->comps[0][2], 0.0},
+        {rot->comps[1][0], rot->comps[1][1], rot->comps[1][2], 0.0},
+        {rot->comps[2][0], rot->comps[2][1], rot->comps[2][2], 0.0},
+        {pos->comps[0],    pos->comps[1],    pos->comps[2],    1.0}
+    }}};
 }
 
 void mat3_t_mul(mat3_t *r, mat3_t *a, mat3_t *b)
 {
     *r = (mat3_t)
-    {
-        a->rows[0].x * b->rows[0].x + a->rows[0].y * b->rows[1].x + a->rows[0].z * b->rows[2].x,
+    {{{
+        {a->rows[0].x * b->rows[0].x + a->rows[0].y * b->rows[1].x + a->rows[0].z * b->rows[2].x,
         a->rows[0].x * b->rows[0].y + a->rows[0].y * b->rows[1].y + a->rows[0].z * b->rows[2].y,
-        a->rows[0].x * b->rows[0].z + a->rows[0].y * b->rows[1].z + a->rows[0].z * b->rows[2].z,
+        a->rows[0].x * b->rows[0].z + a->rows[0].y * b->rows[1].z + a->rows[0].z * b->rows[2].z},
 
-        a->rows[1].x * b->rows[0].x + a->rows[1].y * b->rows[1].x + a->rows[1].z * b->rows[2].x,
+        {a->rows[1].x * b->rows[0].x + a->rows[1].y * b->rows[1].x + a->rows[1].z * b->rows[2].x,
         a->rows[1].x * b->rows[0].y + a->rows[1].y * b->rows[1].y + a->rows[1].z * b->rows[2].y,
-        a->rows[1].x * b->rows[0].z + a->rows[1].y * b->rows[1].z + a->rows[1].z * b->rows[2].z,
+        a->rows[1].x * b->rows[0].z + a->rows[1].y * b->rows[1].z + a->rows[1].z * b->rows[2].z},
 
-        a->rows[2].x * b->rows[0].x + a->rows[2].y * b->rows[1].x + a->rows[2].z * b->rows[2].x,
+        {a->rows[2].x * b->rows[0].x + a->rows[2].y * b->rows[1].x + a->rows[2].z * b->rows[2].x,
         a->rows[2].x * b->rows[0].y + a->rows[2].y * b->rows[1].y + a->rows[2].z * b->rows[2].y,
-        a->rows[2].x * b->rows[0].z + a->rows[2].y * b->rows[1].z + a->rows[2].z * b->rows[2].z,
-    };
+        a->rows[2].x * b->rows[0].z + a->rows[2].y * b->rows[1].z + a->rows[2].z * b->rows[2].z},
+    }}};
 }
 
 void mat3_t_identity(mat3_t *m)
 {
     *m = (mat3_t)
-    {
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0
-    };
+    {{{
+        {1.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0},
+        {0.0, 0.0, 1.0}
+    }}};
 }
 
 void mat3_t_transpose(mat3_t *r, mat3_t *m)
 {
     *r = (mat3_t)
-    {
-        m->comps[0][0], m->comps[1][0], m->comps[2][0],
-        m->comps[0][1], m->comps[1][1], m->comps[2][1],
-        m->comps[0][2], m->comps[1][2], m->comps[2][2],
-    };
+    {{{
+        {m->comps[0][0], m->comps[1][0], m->comps[2][0]},
+        {m->comps[0][1], m->comps[1][1], m->comps[2][1]},
+        {m->comps[0][2], m->comps[1][2], m->comps[2][2]},
+    }}};
 }
 
 void mat3_t_rotate_x(mat3_t *m, float angle)
@@ -149,7 +149,7 @@ void mat3_t_rotate_x(mat3_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat3_t_mul(m, m, &(mat3_t){1.0, 0.0, 0.0, 0.0, c, s, 0.0, -s, c});
+    mat3_t_mul(m, m, &(mat3_t){{{ {1.0, 0.0, 0.0}, {0.0, c, s}, {0.0, -s, c} }}});
 }
 
 void mat3_t_rotate_y(mat3_t *m, float angle)
@@ -160,7 +160,7 @@ void mat3_t_rotate_y(mat3_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat3_t_mul(m, m, &(mat3_t){c, 0.0, -s, 0.0, 1.0, 0.0, s, 0.0, c});
+    mat3_t_mul(m, m, &(mat3_t){{{ {c, 0.0, -s}, {0.0, 1.0, 0.0}, {s, 0.0, c} }}});
 }
 
 void mat3_t_rotate_z(mat3_t *m, float angle)
@@ -171,55 +171,55 @@ void mat3_t_rotate_z(mat3_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat3_t_mul(m, m, &(mat3_t){c, s, 0.0, -s, c, 0.0, 0.0, 0.0, 1.0});
+    mat3_t_mul(m, m, &(mat3_t){{{ {c, s, 0.0}, {-s, c, 0.0}, {0.0, 0.0, 1.0} }}});
 }
 
 void mat4_t_mul(mat4_t *r, mat4_t *a, mat4_t *b)
 {
     *r = (mat4_t)
-    {
-        a->rows[0].x * b->rows[0].x + a->rows[0].y * b->rows[1].x + a->rows[0].z * b->rows[2].x + a->rows[0].w * b->rows[3].x,
+    {{{
+        {a->rows[0].x * b->rows[0].x + a->rows[0].y * b->rows[1].x + a->rows[0].z * b->rows[2].x + a->rows[0].w * b->rows[3].x,
         a->rows[0].x * b->rows[0].y + a->rows[0].y * b->rows[1].y + a->rows[0].z * b->rows[2].y + a->rows[0].w * b->rows[3].y,
         a->rows[0].x * b->rows[0].z + a->rows[0].y * b->rows[1].z + a->rows[0].z * b->rows[2].z + a->rows[0].w * b->rows[3].z,
-        a->rows[0].x * b->rows[0].w + a->rows[0].y * b->rows[1].w + a->rows[0].z * b->rows[2].w + a->rows[0].w * b->rows[3].w,
+        a->rows[0].x * b->rows[0].w + a->rows[0].y * b->rows[1].w + a->rows[0].z * b->rows[2].w + a->rows[0].w * b->rows[3].w},
 
-        a->rows[1].x * b->rows[0].x + a->rows[1].y * b->rows[1].x + a->rows[1].z * b->rows[2].x + a->rows[1].w * b->rows[3].x,
+        {a->rows[1].x * b->rows[0].x + a->rows[1].y * b->rows[1].x + a->rows[1].z * b->rows[2].x + a->rows[1].w * b->rows[3].x,
         a->rows[1].x * b->rows[0].y + a->rows[1].y * b->rows[1].y + a->rows[1].z * b->rows[2].y + a->rows[1].w * b->rows[3].y,
         a->rows[1].x * b->rows[0].z + a->rows[1].y * b->rows[1].z + a->rows[1].z * b->rows[2].z + a->rows[1].w * b->rows[3].z,
-        a->rows[1].x * b->rows[0].w + a->rows[1].y * b->rows[1].w + a->rows[1].z * b->rows[2].w + a->rows[1].w * b->rows[3].w,
+        a->rows[1].x * b->rows[0].w + a->rows[1].y * b->rows[1].w + a->rows[1].z * b->rows[2].w + a->rows[1].w * b->rows[3].w},
 
-        a->rows[2].x * b->rows[0].x + a->rows[2].y * b->rows[1].x + a->rows[2].z * b->rows[2].x + a->rows[2].w * b->rows[3].x,
+        {a->rows[2].x * b->rows[0].x + a->rows[2].y * b->rows[1].x + a->rows[2].z * b->rows[2].x + a->rows[2].w * b->rows[3].x,
         a->rows[2].x * b->rows[0].y + a->rows[2].y * b->rows[1].y + a->rows[2].z * b->rows[2].y + a->rows[2].w * b->rows[3].y,
         a->rows[2].x * b->rows[0].z + a->rows[2].y * b->rows[1].z + a->rows[2].z * b->rows[2].z + a->rows[2].w * b->rows[3].z,
-        a->rows[2].x * b->rows[0].w + a->rows[2].y * b->rows[1].w + a->rows[2].z * b->rows[2].w + a->rows[2].w * b->rows[3].w,
+        a->rows[2].x * b->rows[0].w + a->rows[2].y * b->rows[1].w + a->rows[2].z * b->rows[2].w + a->rows[2].w * b->rows[3].w},
 
-        a->rows[3].x * b->rows[0].x + a->rows[3].y * b->rows[1].x + a->rows[3].z * b->rows[2].x + a->rows[3].w * b->rows[3].x,
+        {a->rows[3].x * b->rows[0].x + a->rows[3].y * b->rows[1].x + a->rows[3].z * b->rows[2].x + a->rows[3].w * b->rows[3].x,
         a->rows[3].x * b->rows[0].y + a->rows[3].y * b->rows[1].y + a->rows[3].z * b->rows[2].y + a->rows[3].w * b->rows[3].y,
         a->rows[3].x * b->rows[0].z + a->rows[3].y * b->rows[1].z + a->rows[3].z * b->rows[2].z + a->rows[3].w * b->rows[3].z,
-        a->rows[3].x * b->rows[0].w + a->rows[3].y * b->rows[1].w + a->rows[3].z * b->rows[2].w + a->rows[3].w * b->rows[3].w,
-    };
+        a->rows[3].x * b->rows[0].w + a->rows[3].y * b->rows[1].w + a->rows[3].z * b->rows[2].w + a->rows[3].w * b->rows[3].w},
+    }}};
 }
 
 void mat4_t_identity(mat4_t *m)
 {
     *m = (mat4_t)
-    {
-        1.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0,
-    };
+    {{{
+        {1.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0},
+        {0.0, 0.0, 0.0, 1.0},
+    }}};
 }
 
 void mat4_t_transpose(mat4_t *r, mat4_t *m)
 {
     *r = (mat4_t)
-    {
-        m->comps[0][0], m->comps[1][0], m->comps[2][0], m->comps[3][0],
-        m->comps[0][1], m->comps[1][1], m->comps[2][1], m->comps[3][1],
-        m->comps[0][2], m->comps[1][2], m->comps[2][2], m->comps[3][2],
-        m->comps[0][3], m->comps[1][3], m->comps[2][3], m->comps[3][3],
-    };
+    {{{
+        {m->comps[0][0], m->comps[1][0], m->comps[2][0], m->comps[3][0]},
+        {m->comps[0][1], m->comps[1][1], m->comps[2][1], m->comps[3][1]},
+        {m->comps[0][2], m->comps[1][2], m->comps[2][2], m->comps[3][2]},
+        {m->comps[0][3], m->comps[1][3], m->comps[2][3], m->comps[3][3]},
+    }}};
 }
 
 void mat4_t_rotate_x(mat4_t *m, float angle)
@@ -230,7 +230,7 @@ void mat4_t_rotate_x(mat4_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat4_t_mul(m, m, &(mat4_t){1.0, 0.0, 0.0, 0.0, 0.0, c, s, 0.0, 0.0, -s, c, 0.0, 0.0, 0.0, 0.0, 1.0});
+    mat4_t_mul(m, m, &(mat4_t){{{ {1.0, 0.0, 0.0, 0.0}, {0.0, c, s, 0.0}, {0.0, -s, c, 0.0}, {0.0, 0.0, 0.0, 1.0} }}});
 }
 
 void mat4_t_rotate_y(mat4_t *m, float angle)
@@ -241,7 +241,7 @@ void mat4_t_rotate_y(mat4_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat4_t_mul(m, m, &(mat4_t){c, 0.0, -s, 0.0, 0.0, 1.0, 0.0, 0.0, s, 0.0, c, 0.0, 0.0, 0.0, 0.0, 1.0});
+    mat4_t_mul(m, m, &(mat4_t){{{ {c, 0.0, -s, 0.0}, {0.0, 1.0, 0.0, 0.0}, {s, 0.0, c, 0.0}, {0.0, 0.0, 0.0, 1.0} }}});
 }
 
 void mat4_t_rotate_z(mat4_t *m, float angle)
@@ -252,7 +252,7 @@ void mat4_t_rotate_z(mat4_t *m, float angle)
     s = sin(angle * 3.14159265);
     c = cos(angle * 3.14159265);
 
-    mat4_t_mul(m, m, &(mat4_t){c, s, 0.0, 0.0, -s, c, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0});
+    mat4_t_mul(m, m, &(mat4_t){{{ {c, s, 0.0, 0.0}, {-s, c, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0} }}});
 }
 
 void mat4_t_invvm(mat4_t *r, mat4_t *m)
@@ -260,12 +260,12 @@ void mat4_t_invvm(mat4_t *r, mat4_t *m)
     mat4_t_transpose(r, m);
 
     r->rows[3] = (vec4_t)
-    {
+    {{{
         -m->comps[0][3] * m->comps[0][0] - m->comps[1][3] * m->comps[1][0] - m->comps[2][3] * m->comps[2][0],
         -m->comps[0][3] * m->comps[0][1] - m->comps[1][3] * m->comps[1][1] - m->comps[2][3] * m->comps[2][1],
         -m->comps[0][3] * m->comps[0][2] - m->comps[1][3] * m->comps[1][2] - m->comps[2][3] * m->comps[2][2],
         1.0
-    };
+    }}};
 
     r->comps[0][3] = 0.0;
     r->comps[1][3] = 0.0;

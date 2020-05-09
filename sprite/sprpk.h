@@ -77,8 +77,8 @@ void get_sprpk_data(struct header_t *header, void **data);
 #include <string.h>
 #include <float.h>
 #include <math.h>
-#include "stb/stb_image.h"
-#include "stb/stb_image_write.h"
+#include "../../stb/stb_image.h"
+#include "../../stb/stb_image_write.h"
 #include "../file/path.h"
 #include "../file/file.h"
 
