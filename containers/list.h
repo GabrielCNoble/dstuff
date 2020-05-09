@@ -21,6 +21,8 @@ void expand_list(struct list_t *list, uint32_t elem_count);
 
 void *get_list_element(struct list_t *list, uint32_t index);
 
+void get_list_element_value(struct list_t *list, uint32_t index, void *value);
+
 uint32_t add_list_element(struct list_t *list, void *element);
 
 void remove_list_element(struct list_t *list, uint32_t index);
@@ -92,7 +94,7 @@ void *get_list_element(struct list_t *list, uint32_t index)
     char *buffer;
     void *element = NULL;
 
-    if(index < list->size)
+    if(index < list->cursor)
     {
         buffer = (char*)list->buffers[index / list->buffer_size];
         element = buffer + (index % list->buffer_size) * list->elem_size;

@@ -15,10 +15,10 @@ typedef struct vec2_t
             float y;
         };
     };
-        
+
 }vec2_t;
 
-
+#define vec2_t_c(x, y) (vec2_t){x, y}
 
 // vec2_t operator * (float s, const vec2_t &vec);
 
