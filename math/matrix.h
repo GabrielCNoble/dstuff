@@ -261,9 +261,9 @@ void mat4_t_invvm(mat4_t *r, mat4_t *m)
 
     r->rows[3] = (vec4_t)
     {{{
-        -m->comps[0][3] * m->comps[0][0] - m->comps[1][3] * m->comps[1][0] - m->comps[2][3] * m->comps[2][0],
-        -m->comps[0][3] * m->comps[0][1] - m->comps[1][3] * m->comps[1][1] - m->comps[2][3] * m->comps[2][1],
-        -m->comps[0][3] * m->comps[0][2] - m->comps[1][3] * m->comps[1][2] - m->comps[2][3] * m->comps[2][2],
+        -r->comps[0][3] * r->comps[0][0] - r->comps[1][3] * r->comps[1][0] - r->comps[2][3] * r->comps[2][0],
+        -r->comps[0][3] * r->comps[0][1] - r->comps[1][3] * r->comps[1][1] - r->comps[2][3] * r->comps[2][1],
+        -r->comps[0][3] * r->comps[0][2] - r->comps[1][3] * r->comps[1][2] - r->comps[2][3] * r->comps[2][2],
         1.0
     }}};
 
@@ -293,8 +293,8 @@ void mat4_t_ortho(mat4_t *m, float width, float height, float z_near, float z_fa
 
     m->comps[0][0] =  2.0 / width;
     m->comps[1][1] = -2.0 / height;
-    m->comps[2][2] = 1.0 / (z_far - z_near);
-    m->comps[3][2] = (z_far + z_near) / (z_far - z_near);
+    m->comps[2][2] = -1.0 / (z_far - z_near);
+    m->comps[3][2] = -z_near / (z_far - z_near);
 }
 
 void mat4_t_pitch(mat4_t* m, float pitch)

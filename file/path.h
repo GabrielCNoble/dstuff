@@ -21,6 +21,8 @@ int32_t get_index_from_path(char *path);
 
 char *format_path(char *path);
 
+char *append_ext(char *file_name, char *ext);
+
 char *append_path(char *path, char *append);
 
 uint32_t is_dir(char *path);
@@ -219,7 +221,7 @@ char *format_path(char *path)
     return formatted_path;
 }
 
-char *add_file_name_ext(char *file_name, char *ext)
+char *append_ext(char *file_name, char *ext)
 {
     static char file_name_ext[PATH_MAX];
     int32_t index;
@@ -228,8 +230,7 @@ char *add_file_name_ext(char *file_name, char *ext)
         strcpy(file_name_ext, file_name);
         index = strlen(file_name_ext);
 
-        while(index >= 0 && (file_name_ext[index] == ' ' || file_name_ext[index] == '\n' ||
-                                file_name_ext[index] == '.'))
+        while(index >= 0 && file_name_ext[index] != '.')
         {
             index--;
         }
@@ -239,7 +240,11 @@ char *add_file_name_ext(char *file_name, char *ext)
             file_name_ext[index] = '\0';
         }
 
-        strcat(file_name_ext, ".");
+        if(ext[0] != '.')
+        {
+            strcat(file_name_ext, ".");
+        }
+
         strcat(file_name_ext, ext);
         return file_name_ext;
     }

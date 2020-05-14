@@ -20,6 +20,8 @@ typedef struct vec2_t
 
 #define vec2_t_c(x, y) (vec2_t){{{x, y}}}
 
+void vec2_t_add(vec2_t *r, vec2_t *a, vec2_t *b);
+
 // vec2_t operator * (float s, const vec2_t &vec);
 
 // vec2_t operator / (float s, const vec2_t &vec);
@@ -121,6 +123,12 @@ void vec4_t_fabs(vec4_t *r, vec4_t *v);
 */
 
 #ifdef DSTUFF_MATH_VECTOR_IMPLEMENTATION
+
+void vec2_t_add(vec2_t *r, vec2_t *a, vec2_t *b)
+{
+    r->x = a->x + b->x;
+    r->y = a->y + b->y;
+}
 
 void vec3_t_add(vec3_t *r, vec3_t *a, vec3_t *b)
 {
