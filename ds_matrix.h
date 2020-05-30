@@ -1,7 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "vector.h"
+#include "ds_vector.h"
 
 
 
@@ -90,7 +90,7 @@ void mat4_t_yaw(mat4_t* m, float yaw);
 =====================================================================
 */
 
-#ifdef DSTUFF_MATH_MATRIX_IMPLEMENTATION
+#ifdef DS_MATRIX_IMPLEMENTATION
 
 void mat4_t_comp(mat4_t *r, mat3_t *rot, vec3_t *pos)
 {

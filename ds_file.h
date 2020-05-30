@@ -15,7 +15,9 @@ void write_file(void **buffer, long *buffer_size);
 int file_exists(char *file_name);
 
 
-#ifdef DSTUFF_FILE_FILE_IMPLEMENTATION
+#ifdef DS_FILE_IMPLEMENTATION
+
+#include "ds_mem.h"
 
 long file_size(FILE *file)
 {
@@ -38,7 +40,7 @@ void read_file(FILE *file, void **buffer, long *buffer_size)
     if(file)
     {
         size = file_size(file);
-        file_buffer = (char *)calloc(size + 1, 1);
+        file_buffer = (char *)mem_Calloc(size + 1, 1);
         fread(file_buffer, size, 1, file);
         file_buffer[size] = '\0';
     }

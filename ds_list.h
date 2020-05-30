@@ -31,11 +31,13 @@ void qsort_list_rec(struct list_t *list, uint32_t left, uint32_t right, int32_t 
 
 void qsort_list(struct list_t *list, int32_t (*compare)(void *a, void *b));
 
-#ifdef DSTUFF_CONTAINERS_LIST_IMPLEMENTATION
+#ifdef DS_LIST_IMPLEMENTATION
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "ds_mem.h"
+
 struct list_t create_list(uint32_t elem_size, uint32_t buffer_size)
 {
     struct list_t list;
@@ -65,10 +67,10 @@ void destroy_list(struct list_t *list)
         list->buffers[0] = (char *)list->buffers[0] - list->elem_size * 2;
         for(uint32_t i = 0; i < list->size / list->buffer_size; i++)
         {
-            free(list->buffers[i]);
+            mem_Free(list->buffers[i]);
         }
 
-        free(list->buffers);
+        mem_Free(list->buffers);
     }
 }
 
@@ -88,16 +90,16 @@ void expand_list(struct list_t *list, uint32_t elem_count)
     buffer_count = elem_count / list->buffer_size;
     list_buffer_count = list->size / list->buffer_size;
     list->size += elem_count;
-    buffers = (void**)calloc(list->size, sizeof(void *));
+    buffers = (void**)mem_Calloc(list->size, sizeof(void *));
     if(list->buffers)
     {
         memcpy(buffers, list->buffers, sizeof(void *) * list_buffer_count);
-        free(list->buffers);
+        mem_Free(list->buffers);
     }
 
     for(uint32_t i = 0; i < buffer_count; i++)
     {
-        buffers[i + list_buffer_count] = calloc(list->buffer_size, list->elem_size);
+        buffers[i + list_buffer_count] = mem_Calloc(list->buffer_size, list->elem_size);
     }
 
     list->buffers = buffers;

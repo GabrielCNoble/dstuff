@@ -70,17 +70,17 @@ void get_sprpk_entry(struct header_t *header, struct entry_t **entry, uint32_t e
 
 void get_sprpk_data(struct header_t *header, void **data);
 
-#ifdef DSTUFF_SPRITE_SPRPK_IMPLEMENTATION
+#ifdef DS_SPRPK_IMPLEMENTATION
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
 #include <math.h>
-#include "../../stb/stb_image.h"
-#include "../../stb/stb_image_write.h"
-#include "../file/path.h"
-#include "../file/file.h"
+#include "../stb/stb_image.h"
+#include "../stb/stb_image_write.h"
+#include "ds_path.h"
+#include "ds_file.h"
 
 #define MAX(a, b) (a>b?a:b)
 #define MIN(a, b) (a<b?a:b)

@@ -30,7 +30,7 @@ uint32_t is_dir(char *path);
 
 
 
-#ifdef DSTUFF_FILE_PATH_IMPLEMENTATION
+#ifdef DS_PATH_IMPLEMENTATION
 
 char *strip_file_name_from_path(char *path)
 {

@@ -22,11 +22,13 @@ void *peek_ringbuffer_element(struct ringbuffer_t *ringbuffer);
 
 void *get_ringbuffer_element(struct ringbuffer_t *ringbuffer);
 
-#ifdef DSTUFF_CONTAINERS_RING_BUFFER_IMPLEMENTATION
+#ifdef DS_RINGBUFFER_IMPLEMENTATION
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "ds_mem.h"
+
 struct ringbuffer_t create_ringbuffer(uint32_t elem_size, uint32_t buffer_size)
 {
     struct ringbuffer_t ringbuffer;
@@ -35,7 +37,7 @@ struct ringbuffer_t create_ringbuffer(uint32_t elem_size, uint32_t buffer_size)
     ringbuffer.buffer_size = buffer_size;
     ringbuffer.elem_size = elem_size;
     ringbuffer.free_slots = buffer_size;
-    ringbuffer.buffer = calloc(elem_size, buffer_size);
+    ringbuffer.buffer = mem_Calloc(elem_size, buffer_size);
 
     return ringbuffer;
 }

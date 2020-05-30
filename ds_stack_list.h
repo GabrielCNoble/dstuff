@@ -27,11 +27,13 @@ uint32_t add_stack_list_element(struct stack_list_t *stack_list, void *element);
 
 void remove_stack_list_element(struct stack_list_t *stack_list, uint32_t index);
 
-#ifdef DSTUFF_CONTAINERS_STACK_LIST_IMPLEMENTATION
+#ifdef DS_STACK_LIST_IMPLEMENTATION
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "ds_mem.h"
+
 struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size)
 {
     struct stack_list_t stack_list;
@@ -52,10 +54,10 @@ void destroy_stack_list(struct stack_list_t *stack_list)
 
     for(uint32_t i = 0; i < buffer_count; i++)
     {
-        free(stack_list->buffers[i]);
+        mem_Free(stack_list->buffers[i]);
     }
 
-    free(stack_list->free_stack);
+    mem_Free(stack_list->free_stack);
 }
 
 void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count)
@@ -77,19 +79,19 @@ void expand_stack_list(struct stack_list_t *stack_list, uint32_t elem_count)
 
     stack_list->size += elem_count;
 
-    buffers = (void**)calloc(stack_list->size, sizeof(void *));
-    free_stack = (uint32_t*)calloc(stack_list->size, sizeof(uint32_t));
+    buffers = (void**)mem_Calloc(stack_list->size, sizeof(void *));
+    free_stack = (uint32_t*)mem_Calloc(stack_list->size, sizeof(uint32_t));
 
     if(stack_list->buffers)
     {
         memcpy(buffers, stack_list->buffers, sizeof(void *) * list_buffer_count);
-        free(stack_list->buffers);
-        free(stack_list->free_stack);
+        mem_Free(stack_list->buffers);
+        mem_Free(stack_list->free_stack);
     }
 
     for(uint32_t i = 0; i < buffer_count; i++)
     {
-        buffers[i + list_buffer_count] = calloc(stack_list->buffer_size, stack_list->elem_size);
+        buffers[i + list_buffer_count] = mem_Calloc(stack_list->buffer_size, stack_list->elem_size);
     }
 
     stack_list->buffers = buffers;

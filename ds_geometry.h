@@ -19,7 +19,7 @@ vec3_t closest_point_on_triangle(vec3_t *p, vec3_t *v0, vec3_t *v1, vec3_t *v2);
 
 int closest_point_line_triangle(vec3_t *v0, vec3_t *v1, vec3_t *v2, vec3_t *a, vec3_t *b, vec3_t *point_on_tri, vec3_t *point_on_line, float *line_t);
 
-#ifdef DSTUFF_MATH_GEOMETRY_IMPLEMENTATION
+#ifdef DS_GEOMETRY_IMPLEMENTATION
 
 float project_point_on_line(vec3_t *p, vec3_t *line_a, vec3_t *line_vec)
 {
@@ -67,7 +67,7 @@ vec3_t closest_point_on_triangle(vec3_t *p, vec3_t *v0, vec3_t *v1, vec3_t *v2)
     // normal = vec3_t_normalize(vec3_t_cross(c - b, b - a));
     vec3_t_cross(&normal, &v1_to_v2, &v0_to_v1);
     vec3_t_normalize(&normal, &normal);
-    
+
     // projected = point - normal * vec3_t_dot(normal, point - a);
     project_point_on_plane(&projected, p, v0, &normal);
 
@@ -75,12 +75,12 @@ vec3_t closest_point_on_triangle(vec3_t *p, vec3_t *v0, vec3_t *v1, vec3_t *v2)
     vec3_t_cross(&planes[0], &normal, &v0_to_v1);
     vec3_t_cross(&planes[1], &normal, &v1_to_v2);
     vec3_t_cross(&planes[2], &normal, &v2_to_v0);
-    
+
     /* calculate the distance between the projected point and the edge planes... */
     dists[0] = dist_to_plane(&projected, v0, &planes[0]);
     dists[1] = dist_to_plane(&projected, v1, &planes[1]);
     dists[2] = dist_to_plane(&projected, v2, &planes[2]);
-    
+
 
     if(dists[0] > 0.0 || dists[1] > 0.0 || dists[2] > 0.0)
     {
@@ -163,7 +163,7 @@ int closest_point_line_triangle(vec3_t *v0, vec3_t *v1, vec3_t *v2, vec3_t *a, v
     vec3_t_sub(&v2_to_v0, v0, v2);
     vec3_t_sub(&line_vec, b, a);
 
-    
+
     vec3_t_cross(&triangle_normal, &v1_to_v2, &v0_to_v1);
     vec3_t_normalize(&triangle_normal, &triangle_normal);
 
@@ -173,8 +173,8 @@ int closest_point_line_triangle(vec3_t *v0, vec3_t *v1, vec3_t *v2, vec3_t *a, v
     vec3_t_cross(&planes[0], &triangle_normal, &v0_to_v1);
     vec3_t_cross(&planes[1], &triangle_normal, &v1_to_v2);
     vec3_t_cross(&planes[2], &triangle_normal, &v2_to_v0);
-    
-    /* compute the line endpoints distances to the 
+
+    /* compute the line endpoints distances to the
     triangle plane */
     a_dist = dist_to_plane(a, v0, &triangle_normal);
     b_dist = dist_to_plane(b, v0, &triangle_normal);
@@ -190,23 +190,23 @@ int closest_point_line_triangle(vec3_t *v0, vec3_t *v1, vec3_t *v2, vec3_t *a, v
         /* line is parallel to plane. */
         edge_time = 0.0;
     }
-    
+
     /* this handles the case of endpoints being inside the
-    triangle. If the line intersects the triangles' plane, 
-    'closest' will be the intersection point. Otherwise, it'll 
+    triangle. If the line intersects the triangles' plane,
+    'closest' will be the intersection point. Otherwise, it'll
     be one of the endpoints. */
     vec3_t_fmadd(&closest, a, &line_vec, edge_time);
-    
+
     /* compute the distance between 'closest' and
-    the edge planes... */        
+    the edge planes... */
     dists.x = dist_to_plane(&closest, v0, &planes[0]);
     dists.y = dist_to_plane(&closest, v1, &planes[1]);
     dists.z = dist_to_plane(&closest, v2, &planes[2]);
-    
+
     /* project the closest point onto the triangle's plane. The point
     may be outside the triangle... */
     project_point_on_plane(&projected, &closest, v0, &triangle_normal);
-    
+
     if(dists.x < 0.0 && dists.y < 0.0 && dists.z < 0.0)
     {
         /* closest point projects inside the triangle. */
@@ -272,7 +272,7 @@ int closest_point_line_triangle(vec3_t *v0, vec3_t *v1, vec3_t *v2, vec3_t *a, v
     b_dist = vec3_t_dot(&line_vec, &line_vec);
 
     if(b_dist != 0.0)
-    {   
+    {
         // edge_t = vec3_t_dot(*point_on_tri - a, &line_vec) / b_dist;
         vec3_t point_on_tri_to_a;
         vec3_t_sub(&point_on_tri_to_a, point_on_tri, a);

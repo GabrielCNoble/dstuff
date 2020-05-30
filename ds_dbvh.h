@@ -2,9 +2,9 @@
 #define DBVH_H
 
 #include <stdint.h>
-#include "../math/vector.h"
-#include "../containers/list.h"
-#include "../containers/stack_list.h"
+#include "ds_vector.h"
+#include "ds_list.h"
+#include "ds_stack_list.h"
 
 struct dbvh_node_t
 {
@@ -58,7 +58,7 @@ void recompute_volumes(struct dbvh_tree_t *tree, int start_node_index);
 struct list_t *box_on_dbvh_contents(struct dbvh_tree_t *tree, vec3_t *aabb_max, vec3_t *aabb_min);
 
 
-#ifdef DSTUFF_ACCEL_STRUCTS_DBVH_IMPLEMENTATION
+#ifdef DS_DBVH_IMPLEMENTATION
 
 #include <stdio.h>
 #include <float.h>
