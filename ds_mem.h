@@ -5,6 +5,19 @@
 
 #define MEM_GUARD_POINTERS 24
 
+//#define INSTRUMENT_MEMORY
+//#define CHECK_DOUBLE_FREE
+//#define RECORD_REALLOCS
+
+struct mem_realloc_t
+{
+    struct mem_realloc_t *next;
+    uint32_t line;
+    uint32_t prev_size;
+    uint32_t new_size;
+    char file[256];
+};
+
 struct mem_header_t
 {
     void *guard[MEM_GUARD_POINTERS];
@@ -14,6 +27,12 @@ struct mem_header_t
     char file[256];
     struct mem_header_t *next;
     struct mem_header_t *prev;
+    
+    #ifdef RECORD_REALLOCS
+    uint32_t realloc_count;
+    struct mem_realloc_t *reallocs;
+    struct mem_realloc_t *last_realloc;
+    #endif
 };
 
 struct mem_tail_t
@@ -21,10 +40,11 @@ struct mem_tail_t
     void *guard[MEM_GUARD_POINTERS];
 };
 
-//#define INSTRUMENT_MEMORY
-//#define CHECK_DOUBLE_FREE
 
-
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct mem_header_t *mem_GetAllocHeader(void *memory);
 
@@ -40,8 +60,13 @@ void *mem_MallocImp(size_t size, uint32_t line, char *file);
 
 void *mem_CallocImp(size_t num, size_t size, uint32_t line, char *file);
 
+//void *mem_ReallocImp(void *memory, uint32_t new_size);
+
 void mem_FreeImp(void *memory, uint32_t line, char *file);
 
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef INSTRUMENT_MEMORY
 
@@ -77,6 +102,11 @@ void mem_FreeImp(void *memory, uint32_t line, char *file);
 
 struct mem_header_t *mem_headers = NULL;
 struct mem_header_t *mem_last_header = NULL;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct mem_header_t *mem_GetAllocHeader(void *memory)
 {
@@ -181,6 +211,67 @@ void *mem_CallocImp(size_t num, size_t size, uint32_t line, char *file)
     return mem_InitHeaderAndTail(memory, num * size, line, file);
 }
 
+//void *mem_ReallocImp(void *memory, uint32_t new_size, uint32_t line, char *file)
+//{
+//    struct *mem_header_t *header;
+//    struct *mem_tail_t *new_tail;
+//    struct *mem_tail_t *old_tail;
+//    if(memory)
+//    {
+//        header = mem_GetAllocHeader(memory);
+//        header = realloc(header, sizeof(struct mem_header_t) + sizeof(struct mem_tail_t) + new_size);
+//        
+//        /* size will probably have changed, so the tail has to be moved */
+//        new_tail = (char *)header + sizeof(struct mem_header_t) + new_size;
+//        old_tail = (char *)header + sizeof(struct mem_header_t) + header->size;
+//        /* start/end of new tail may overlap start/end of old tail, so use memmov */
+//        memmov(new_tail, old_tail, sizeof(struct mem_tail_t));
+//        
+//        /* this may be a new allocation altogether, so update
+//        the prev and next pointes to point to this header */
+//        if(header->prev)
+//        {
+//            header->prev->next = header;
+//        }
+//        if(header->next)
+//        {
+//            header->next->prev = header;
+//        }
+//        
+//        #ifdef RECORD_REALLOCS
+//        
+//        struct mem_realloc_t *realloc;
+//        realloc = calloc(1, sizeof(struct mem_realloc_t));
+//        realloc->line = line;
+//        realloc->prev_size = header->size;
+//        realloc->new_size = new_size;
+//        strcpy(realloc->file, file);
+//        
+//        if(!header->reallocs)
+//        {
+//            header->reallocs = realloc;
+//        }
+//        else
+//        {
+//            header->last_realloc->next = realloc;
+//        }
+//        
+//        header->last_realloc = realloc;
+//        
+//        #endif
+//        
+//        header->size = new_size;
+//        memory = header + 1;
+//    }
+//    else
+//    {
+//        memory = realloc(memory, sizeof(struct mem_header_t ) + sizeof(struct mem_tail_t) + new_size);
+//        memory = mem_InitHeaderAndTail(memory, size, line, file);
+//    }
+//    
+//    return memory;
+//}
+
 void mem_FreeImp(void *memory, uint32_t line, char *file)
 {
     struct mem_header_t *header = mem_GetAllocHeader(memory);
@@ -222,6 +313,10 @@ void mem_FreeImp(void *memory, uint32_t line, char *file)
 
     #endif
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -26,6 +26,12 @@ void vec2_t_sub(vec2_t *r, vec2_t *a, vec2_t *b);
 
 float vec2_t_dot(vec2_t *a, vec2_t *b);
 
+void vec2_t_mul(vec2_t *r, vec2_t *a, float s);
+
+void vec2_t_normalize(vec2_t *r, vec2_t *v);
+
+float vec2_t_length(vec2_t *v);
+
 // vec2_t operator * (float s, const vec2_t &vec);
 
 // vec2_t operator / (float s, const vec2_t &vec);
@@ -143,6 +149,24 @@ void vec2_t_sub(vec2_t *r, vec2_t *a, vec2_t *b)
 float vec2_t_dot(vec2_t *a, vec2_t *b)
 {
     return a->x * b->x + a->y * b->y;
+}
+
+void vec2_t_mul(vec2_t *r, vec2_t *a, float s)
+{
+    r->x = a->x * s;
+    r->y = a->y * s;
+}
+
+void vec2_t_normalize(vec2_t *r, vec2_t *v)
+{
+    float l = sqrt(v->x * v->x + v->y * v->y);
+    r->x = v->x / l;
+    r->y = v->y / l;
+}
+
+float vec2_t_length(vec2_t *v)
+{
+    return sqrt(v->x * v->x + v->y * v->y);
 }
 
 void vec3_t_add(vec3_t *r, vec3_t *a, vec3_t *b)

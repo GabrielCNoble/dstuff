@@ -7,18 +7,27 @@
 #include <limits.h>
 #include <stdlib.h>
 
+/* removes the file name from the end of a path. Essentially returns
+the path to the file */
 char *strip_file_name_from_path(char *path);
 
+/* returns the file name from a path */
 char *strip_path_from_file_name(char *path);
 
+/* returns the file extension from a path, if the path
+contains a file name at the end. */
 char *strip_path_from_ext(char *path);
 
+/* returns only the path (with potentially a
+file name at the end) without a file extension */
 char *strip_ext_from_path(char *path);
 
+/* deprecated */
 char *strip_decorations_from_path(char *path);
 
 int32_t get_index_from_path(char *path);
 
+/* convert paths to unix style */
 char *format_path(char *path);
 
 char *append_ext(char *file_name, char *ext);
@@ -106,7 +115,7 @@ char *strip_path_from_ext(char *path)
     while(index && path[index] != '.') index--;
     if(!index)
     {
-        return path;
+        return "";
     }
 
     strcpy(stripped_path, path + index + 1);

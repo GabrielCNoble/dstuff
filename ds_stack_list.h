@@ -15,6 +15,11 @@ struct stack_list_t
     uint32_t free_stack_top;
 };
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size);
 
 void destroy_stack_list(struct stack_list_t *stack_list);
@@ -27,12 +32,21 @@ uint32_t add_stack_list_element(struct stack_list_t *stack_list, void *element);
 
 void remove_stack_list_element(struct stack_list_t *stack_list, uint32_t index);
 
+#ifdef __cplusplus
+}
+#endif
+
 #ifdef DS_STACK_LIST_IMPLEMENTATION
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "ds_mem.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size)
 {
@@ -150,6 +164,10 @@ void remove_stack_list_element(struct stack_list_t *stack_list, uint32_t index)
         stack_list->free_stack[stack_list->free_stack_top] = index;
     }
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

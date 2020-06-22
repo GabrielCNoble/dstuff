@@ -1,12 +1,24 @@
+#ifndef OBJ_H
+#define OBJ_H
 
-#include "obj.h"
-#include "..\file\file.h"
-#include "..\file\path.h"
+
+#include "ds_xchg.h"
+
+void load_wavefront(char *file_name, struct geometry_data_t *geometry_data);
+
+void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data);
+
+struct batch_data_t *get_wavefront_batch(char *material_name, struct geometry_data_t *geometry_data);
+
+
+#ifdef DS_WAVEFRONT_IMPLEMENTATION
+
+#include "ds_file.h"
+#include "ds_path.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-
 
 struct face_t
 {
@@ -18,7 +30,6 @@ struct face_vertice_t
 {
     int indices[3];
 };
-
 
 void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
 {
@@ -62,7 +73,7 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
     {
         read_file(file, (void **)&file_buffer, &file_size);
         fclose(file);
-        strcpy(file_path, get_file_path(file_name));
+        strcpy(file_path, strip_file_name_from_path(file_name));
         while(i < file_size)
         {
             switch(file_buffer[i])
@@ -117,26 +128,6 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
                     face = (struct face_t *)get_list_element(&faces, add_list_element(&faces, NULL));
                     face->vertices = create_list(sizeof(struct face_vertice_t), 12);
                     strcpy(face->material, current_batch->material);
-
-//                    batch = obj_GetBatch()
-
-//                    for(j = 0; j < geometry_data->batches.cursor; j++)
-//                    {
-//                        /* try to find a batch that has this material... */
-//                        batch = (struct batch_data_t *)geometry_data->batches.get(j);
-//
-//                        if(!strcmp(batch->material, current_material->name))
-//                        {
-//                            break;
-//                        }
-//                    }
-//
-//                    if(j >= geometry_data->batches.cursor)
-//                    {
-//                        /* no batch using the current material exists, so create a new one... */
-//                        batch = (struct batch_data_t *)geometry_data->batches.get(geometry_data->batches.add(NULL));
-//                        strcpy(batch->material, current_material->name);
-//                    }
 
                     while(file_buffer[i] != '\0' && file_buffer[i] != '\n' &&
                           file_buffer[i] != '\r' && file_buffer[i] != '\t')
@@ -211,8 +202,6 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
                         }
 
                         value_string[value_string_index] = '\0';
-
-//                        current_material = r_GetMaterialHandle(value_string);
                         current_batch = get_wavefront_batch(value_string, geometry_data);
                     }
                     else
@@ -250,7 +239,7 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
 
                         value_string[value_string_index] = '\0';
 
-                        strcpy(material_path, append_path_segment(file_path, value_string));
+                        strcpy(material_path, append_path(file_path, value_string));
                         load_wavefront_mtl(material_path, geometry_data);
                     }
                     else
@@ -298,6 +287,11 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
             }
         }
     }
+    
+    destroy_list(&faces);
+    destroy_list(&vertices);
+    destroy_list(&normals);
+    destroy_list(&tex_coords);
 }
 
 
@@ -321,19 +315,8 @@ void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data)
 
     if(file)
     {
-//        file_buffer = (char *)aux_ReadFile(file);
-//        file_size = aux_FileSize(file);
-//        fclose(file);
         read_file(file, (void **)&file_buffer, &file_size);
         fclose(file);
-
-//        fseek(file, 0, SEEK_END);
-//        file_size = ftell(file);
-//        rewind(file);
-//        file_buffer = (char *)calloc(file_size + 1, 1);
-//        fread(file_buffer, file_size, 1, file);
-//        fclose(file);
-//        file_buffer[file_size] = '\0';
 
         while(i < file_size)
         {
@@ -373,10 +356,7 @@ void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data)
                         }
 
                         color.comps[3] = 1.0;
-
                         current_batch->base_color = color;
-
-//                        r_SetMaterialColorPointer(current_material, color);
                     }
                 break;
 
@@ -475,12 +455,6 @@ void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data)
                         current_batch = (struct batch_data_t *)get_list_element(&geometry_data->batches, add_list_element(&geometry_data->batches, NULL));
                         memset(current_batch, 0, sizeof(struct batch_data_t ));
                         strcpy(current_batch->material, value_str);
-
-
-//                        material_handle = r_CreateEmptyMaterial();
-//                        current_material = r_GetMaterialPointer(material_handle);
-//
-//                        current_material->name = strdup(value_str);
                     }
                     else
                     {
@@ -496,6 +470,7 @@ void load_wavefront_mtl(char *file_name, struct geometry_data_t *geometry_data)
                 case 'i':
                     if(!strcmp(file_buffer + i, "illum"))
                     {
+                        /* illumniati... */
                         while(file_buffer[i] != '\n' && file_buffer[i] != '\r' && file_buffer[i] != '\0' && file_buffer[i] != '\t')i++;
                     }
                     else
@@ -547,13 +522,7 @@ struct batch_data_t *get_wavefront_batch(char *material_name, struct geometry_da
     return (struct batch_data_t *)get_list_element(&geometry_data->batches, i);
 }
 
+#endif
 
 
-
-
-
-
-
-
-
-
+#endif // OBJ_H

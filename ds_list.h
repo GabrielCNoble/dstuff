@@ -12,6 +12,10 @@ struct list_t
     uint32_t size;
 };
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct list_t create_list(uint32_t elem_size, uint32_t buffer_size);
 
@@ -31,12 +35,21 @@ void qsort_list_rec(struct list_t *list, uint32_t left, uint32_t right, int32_t 
 
 void qsort_list(struct list_t *list, int32_t (*compare)(void *a, void *b));
 
+#ifdef __cplusplus
+}
+#endif
+
 #ifdef DS_LIST_IMPLEMENTATION
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "ds_mem.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct list_t create_list(uint32_t elem_size, uint32_t buffer_size)
 {
@@ -197,8 +210,15 @@ void qsort_list_rec(struct list_t *list, uint32_t left, uint32_t right, int32_t 
 
 void qsort_list(struct list_t *list, int32_t (*compare)(void *a, void *b))
 {
-    qsort_list_rec(list, 0, list->cursor - 1, compare);
+    if(list->cursor)
+    {
+        qsort_list_rec(list, 0, list->cursor - 1, compare);
+    }
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
