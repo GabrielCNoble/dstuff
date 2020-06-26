@@ -35,6 +35,8 @@ extern void mat3_t_rotate_y(mat3_t *m, float angle);
 
 extern void mat3_t_rotate_z(mat3_t *m, float angle);
 
+extern void mat3_t_vec3_t_mul(vec3_t *r, vec3_t *v, mat3_t *m);
+
 /*
 =====================================================================
 =====================================================================
@@ -172,6 +174,25 @@ void mat3_t_rotate_z(mat3_t *m, float angle)
     c = cos(angle * 3.14159265);
 
     mat3_t_mul(m, m, &(mat3_t){{{ {c, s, 0.0}, {-s, c, 0.0}, {0.0, 0.0, 1.0} }}});
+}
+
+extern void mat3_t_vec3_t_mul(vec3_t *r, vec3_t *v, mat3_t *m)
+{
+    vec3_t t;
+    
+    t.x = v->x * m->rows[0].x;
+    t.y = v->x * m->rows[0].y;
+    t.z = v->x * m->rows[0].z;
+    
+    t.x += v->y * m->rows[1].x;
+    t.y += v->y * m->rows[1].y;
+    t.z += v->y * m->rows[1].z;
+    
+    t.x += v->z * m->rows[2].x;
+    t.y += v->z * m->rows[2].y;
+    t.z += v->z * m->rows[2].z;
+    
+    *r = t;
 }
 
 void mat4_t_mul(mat4_t *r, mat4_t *a, mat4_t *b)
