@@ -8,7 +8,7 @@
 
 long file_size(FILE *file);
 
-void read_file(FILE *file, void **buffer, long *buffer_size);
+void read_file(FILE *file, void **buffer, uint32_t *buffer_size);
 
 void write_file(void **buffer, long *buffer_size);
 
@@ -32,7 +32,7 @@ long file_size(FILE *file)
     return size;
 }
 
-void read_file(FILE *file, void **buffer, long *buffer_size)
+void read_file(FILE *file, void **buffer, uint32_t *buffer_size)
 {
     char *file_buffer = NULL;
     long size = 0;
@@ -46,7 +46,7 @@ void read_file(FILE *file, void **buffer, long *buffer_size)
     }
 
     *buffer = (void *)file_buffer;
-    *buffer_size = size;
+    *buffer_size = (uint32_t)size;
 }
 
 void write_file(void **buffer, long *buffer_size)
