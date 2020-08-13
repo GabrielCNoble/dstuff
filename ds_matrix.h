@@ -302,6 +302,8 @@ void mat4_t_persp(mat4_t* m, float fov_y, float aspect, float z_near, float z_fa
 
     m->comps[0][0] = z_near / r;
     m->comps[1][1] = -(z_near / t);
+//    m->comps[0][0] = z_near;
+//    m->comps[1][1] = -z_near * aspect;
     m->comps[2][2] = -0.5;
     m->comps[2][3] = -1.0;
     m->comps[3][2] = (-(2.0 * z_near * z_far) / (z_far - z_near)) * 0.5;

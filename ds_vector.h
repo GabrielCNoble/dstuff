@@ -64,6 +64,7 @@ typedef struct vec3_t
 }vec3_t;
 
 #define vec3_t_c(x, y, z) (vec3_t){{{x, y, z}}}
+#define vec3_t_c_vec4_t(v) (vec3_t){{{(v)->x, (v)->y, (v)->z}}}
 
 void vec3_t_add(vec3_t *r, vec3_t *a, vec3_t *b);
 
@@ -83,7 +84,7 @@ void vec3_t_cross(vec3_t *r, vec3_t *a, vec3_t *b);
 
 void vec3_t_fabs(vec3_t *r, vec3_t *v);
 
-void vec3_t_fmadd(vec3_t *r, vec3_t *a, vec3_t *b, float s);
+void vec3_t_fmadd(vec3_t *r, vec3_t *add, vec3_t *mul_a, float mul_b);
 
 void vec3_t_lerp(vec3_t *r, vec3_t *a, vec3_t *b, float s);
 
@@ -236,13 +237,13 @@ void vec3_t_fabs(vec3_t *r, vec3_t *v)
     r->z = fabsf(v->z);
 }
 
-void vec3_t_fmadd(vec3_t *r, vec3_t *a, vec3_t *b, float s)
+void vec3_t_fmadd(vec3_t *r, vec3_t *add, vec3_t *mul_a, float mul_b)
 {
     *r = (vec3_t)
     {
-        .x = fmaf(a->x, b->x, s),
-        .y = fmaf(a->y, b->y, s),
-        .z = fmaf(a->z, b->z, s),
+        .x = fmaf(mul_a->x, mul_b, add->x),
+        .y = fmaf(mul_a->y, mul_b, add->y),
+        .z = fmaf(mul_a->z, mul_b, add->z),
     };
 }
 
