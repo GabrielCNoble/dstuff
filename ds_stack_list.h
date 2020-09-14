@@ -10,6 +10,7 @@ struct stack_list_t
     uint32_t elem_size;
     uint32_t cursor;
     uint32_t size;
+    uint32_t used;
 
     uint32_t *free_stack;
     uint32_t free_stack_top;
@@ -56,6 +57,7 @@ struct stack_list_t create_stack_list(uint32_t elem_size, uint32_t buffer_size)
     stack_list.buffer_size = buffer_size;
     stack_list.elem_size = elem_size;
     stack_list.free_stack_top = 0xffffffff;
+    stack_list.used = 0;
 
     expand_stack_list(&stack_list, 1);
 
@@ -152,6 +154,8 @@ uint32_t add_stack_list_element(struct stack_list_t *stack_list, void *element)
         buffer = (char*)stack_list->buffers[index / stack_list->buffer_size];
         memcpy(buffer + (index % stack_list->buffer_size) * stack_list->elem_size, element, stack_list->elem_size);
     }
+    
+    stack_list->used++;
 
     return index;
 }
@@ -162,6 +166,7 @@ void remove_stack_list_element(struct stack_list_t *stack_list, uint32_t index)
     {
         stack_list->free_stack_top++;
         stack_list->free_stack[stack_list->free_stack_top] = index;
+        stack_list->used--;
     }
 }
 

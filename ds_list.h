@@ -31,6 +31,8 @@ uint32_t add_list_element(struct list_t *list, void *element);
 
 void remove_list_element(struct list_t *list, uint32_t index);
 
+uint32_t find_list_element(struct list_t *list, void *element);
+
 void qsort_list_rec(struct list_t *list, uint32_t left, uint32_t right, int32_t (*compare)(void *a, void *b));
 
 void qsort_list(struct list_t *list, int32_t (*compare)(void *a, void *b));
@@ -84,6 +86,11 @@ void destroy_list(struct list_t *list)
         }
 
         mem_Free(list->buffers);
+        
+        list->buffers = NULL;
+        list->cursor = 0;
+        list->elem_size = 0;
+        list->size = 0;
     }
 }
 
@@ -175,6 +182,19 @@ void remove_list_element(struct list_t *list, uint32_t index)
 
         list->cursor--;
     }
+}
+
+uint32_t find_list_element(struct list_t *list, void *element)
+{
+    for(uint32_t element_index = 0; element_index < list->cursor; element_index++)
+    {
+        if(!memcmp(element, get_list_element(list, element_index), list->elem_size))
+        {
+            return element_index;
+        }
+    }
+        
+    return 0xffffffff;
 }
 
 void qsort_list_rec(struct list_t *list, uint32_t left, uint32_t right, int32_t (*compare)(void *a, void *b))

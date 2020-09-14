@@ -6,7 +6,7 @@
 
 #define MEM_GUARD_POINTERS 24
 
-//#define INSTRUMENT_MEMORY
+#define INSTRUMENT_MEMORY
 //#define CHECK_DOUBLE_FREE
 //#define RECORD_REALLOCS
 
@@ -61,9 +61,11 @@ void *mem_MallocImp(size_t size, uint32_t line, char *file);
 
 void *mem_CallocImp(size_t num, size_t size, uint32_t line, char *file);
 
-//void *mem_ReallocImp(void *memory, uint32_t new_size);
+void *mem_ReallocImp(void *memory, uint32_t new_size, uint32_t line, char *file);
 
 void mem_FreeImp(void *memory, uint32_t line, char *file);
+
+void mem_CheckCommitmentImp();
 
 #ifdef __cplusplus
 }
@@ -79,9 +81,11 @@ void mem_FreeImp(void *memory, uint32_t line, char *file);
 
 #define mem_Calloc(num, size) mem_CallocImp(num, size, __LINE__, __FILE__)
 
-#define mem_Realloc(memory, new_size) mem_Realloc(memory, new_size, __LINE__, __FILE__)
+#define mem_Realloc(memory, new_size) mem_ReallocImp(memory, new_size, __LINE__, __FILE__)
 
 #define mem_Free(memory) mem_FreeImp(memory, __LINE__, __FILE__)
+
+#define mem_CheckCommitment mem_CheckCommitmentImp
 
 #else
 
@@ -96,6 +100,8 @@ void mem_FreeImp(void *memory, uint32_t line, char *file);
 #define mem_Realloc(memory, size) realloc(memory, size)
 
 #define mem_Free(memory) free(memory)
+
+#define mem_CheckCommitment()
 
 #endif
 
@@ -175,7 +181,7 @@ void mem_CheckGuardImp(void *memory)
     {
         if(header->guard[i] != header)
         {
-            printf("mem_CheckGuard: allocation line %d, file %s has corrupt header guard bytes!\n", header->line, header->file);
+            printf("mem_CheckGuard: allocation at line %d, file %s has corrupt header guard bytes!\n", header->line, header->file);
             break;
         }
     }
@@ -193,10 +199,13 @@ void mem_CheckGuardImp(void *memory)
 void mem_CheckGuardsImp()
 {
     struct mem_header_t *header;
+    struct mem_header_t *prev_header;
     header = mem_headers;
+    
     while(header)
     {
         mem_CheckGuard(header + 1);
+        prev_header = header;
         header = header->next;
     }
 }
@@ -222,15 +231,9 @@ void *mem_ReallocImp(void *memory, uint32_t new_size, uint32_t line, char *file)
     struct mem_tail_t *new_tail;
     struct mem_tail_t *old_tail;
     if(memory)
-    {
+    {        
         header = mem_GetAllocHeader(memory);
         header = realloc(header, sizeof(struct mem_header_t) + sizeof(struct mem_tail_t) + new_size);
-        
-        /* size will probably have changed, so the tail has to be moved */
-        new_tail = (char *)header + sizeof(struct mem_header_t) + new_size;
-        old_tail = (char *)header + sizeof(struct mem_header_t) + header->size;
-        /* start/end of new tail may overlap start/end of old tail, so use memmove */
-        memmove(new_tail, old_tail, sizeof(struct mem_tail_t));
         
         /* this may be a new allocation altogether, so update
         the prev and next pointes to point to this header */
@@ -243,6 +246,15 @@ void *mem_ReallocImp(void *memory, uint32_t new_size, uint32_t line, char *file)
             header->next->prev = header;
         }
         
+        /* size and allocation address may have changed, so the tail has to be updated */
+        new_tail = (struct mem_tail_t *)((char *)header + sizeof(struct mem_header_t) + new_size);
+        
+        for(uint32_t guard_index = 0; guard_index < MEM_GUARD_POINTERS; guard_index++)
+        {
+            header->guard[guard_index] = header;
+            new_tail->guard[guard_index] = header;
+        }
+    
         #ifdef RECORD_REALLOCS
         
         struct mem_realloc_t *realloc;
@@ -270,8 +282,7 @@ void *mem_ReallocImp(void *memory, uint32_t new_size, uint32_t line, char *file)
     }
     else
     {
-        memory = realloc(memory, sizeof(struct mem_header_t ) + sizeof(struct mem_tail_t) + new_size);
-        memory = mem_InitHeaderAndTail(memory, new_size, line, file);
+        memory = mem_CallocImp(1, new_size, line, file);
     }
     
     return memory;
@@ -317,6 +328,19 @@ void mem_FreeImp(void *memory, uint32_t line, char *file)
     free(header);
 
     #endif
+}
+
+void mem_CheckCommitmentImp()
+{
+    struct mem_header_t *header = mem_headers;
+    uint32_t total_committed = 0;
+    while(header)
+    {
+        total_committed += header->size;
+        header = header->next;
+    }
+    
+    printf("total memory commited: %u bytes\n", total_committed);
 }
 
 #ifdef __cplusplus

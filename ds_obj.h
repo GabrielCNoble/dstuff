@@ -73,7 +73,7 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
     {
         read_file(file, (void **)&file_buffer, &file_size);
         fclose(file);
-        strcpy(file_path, strip_file_name_from_path(file_name));
+        strcpy(file_path, ds_path_GetPath(file_name));
         while(i < file_size)
         {
             switch(file_buffer[i])
@@ -239,7 +239,7 @@ void load_wavefront(char *file_name,  struct geometry_data_t *geometry_data)
 
                         value_string[value_string_index] = '\0';
 
-                        strcpy(material_path, append_path(file_path, value_string));
+                        strcpy(material_path, ds_path_AppendPath(file_path, value_string));
                         load_wavefront_mtl(material_path, geometry_data);
                     }
                     else

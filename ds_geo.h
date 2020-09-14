@@ -1,8 +1,8 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef DS_GEO
+#define DS_GEO
 
-#include "vector.h"
-#include "utils.h"
+#include "ds_vector.h"
+//#include "utils.h"
 
 // vec3_t support_vertex_upright_capsule(const vec3_t &dir, float height, float radius, vec3_t &normal);
 
