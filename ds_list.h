@@ -110,7 +110,7 @@ void expand_list(struct list_t *list, uint32_t elem_count)
     buffer_count = elem_count / list->buffer_size;
     list_buffer_count = list->size / list->buffer_size;
     list->size += elem_count;
-    buffers = (void**)mem_Calloc(list->size, sizeof(void *));
+    buffers = (void**)mem_Calloc(list->size / list->buffer_size, sizeof(void *));
     if(list->buffers)
     {
         memcpy(buffers, list->buffers, sizeof(void *) * list_buffer_count);
